@@ -1,5 +1,5 @@
 <template>
-<div class="gray">
+<!--<div class="gray"> -->
   <div class="home">
     <Header></Header>
     <full-page ref="example" :options="options" @after-load="afterLoad">
@@ -657,7 +657,7 @@
       </span>
     </el-dialog>
   </div>
-  </div>
+<!--  </div>-->
 </template>
 
 <script lang='ts'>
@@ -1165,13 +1165,13 @@ export default class Home extends Vue {
 </script>
 <style>
 
-.gray {
-  -webkit-filter: grayscale(100%);
-  -moz-filter: grayscale(100%);
-  -ms-filter: grayscale(100%);
-  -o-filter: grayscale(100%);
-  filter: grayscale(100%);
-}
+/*.gray {*/
+/*  -webkit-filter: grayscale(100%);*/
+/*  -moz-filter: grayscale(100%);*/
+/*  -ms-filter: grayscale(100%);*/
+/*  -o-filter: grayscale(100%);*/
+/*  filter: grayscale(100%);*/
+/*}*/
 
 .liuyan {
   top: 20%;
