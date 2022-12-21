@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cm.mapper.CmVisitsMapper">
+    
+    <resultMap type="CmVisits" id="CmVisitsResult">
+        <result property="vid"    column="vid"    />
+        <result property="mName"    column="m_name"    />
+        <result property="atime"    column="atime"    />
+        <result property="vs"    column="vs"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectCmVisitsVo">
+        select vid, m_name, atime, create_by, create_time, update_by, update_time from cm_visits
+    </sql>
+
+    <select id="selectCmVisitsList" parameterType="CmVisits" resultMap="CmVisitsResult">
+        <include refid="selectCmVisitsVo"/>
+        <where>  
+            <if test="mName != null  and mName != ''"> and m_name like concat('%', #{mName}, '%')</if>
+            <if test="params.beginAtime != null and params.beginAtime != '' and params.endAtime != null and params.endAtime != ''"> and atime between #{params.beginAtime} and #{params.endAtime}</if>
+        </where>
+    </select>
+
+    <!--分组统计-->
+    <select id="selectCmVisitsListGroupByMName" parameterType="CmVisits" resultMap="CmVisitsResult">
+        select m_name , count(*) vs  from cm_visits
+        <where>
+            <if test="params.beginAtime != null and params.beginAtime != '' and params.endAtime != null and params.endAtime != ''"> and atime between #{params.beginAtime} and #{params.endAtime}</if>
+        </where>
+        group by m_name
+    </select>
+
+    
+    <select id="selectCmVisitsById" parameterType="Long" resultMap="CmVisitsResult">
+        <include refid="selectCmVisitsVo"/>
+        where vid = #{vid}
+    </select>
+    <!-- 统计今天的 -->
+    <select id="getDayData" resultType="java.lang.Integer">
+        select count(1) from cm_visits
+        where atime >= DATE_FORMAT(NOW(),'%Y-%m-%d')
+        GROUP BY DATE_FORMAT(atime,'%H')
+    </select>
+
+    <select id="getWeekData" resultType="java.lang.Integer">
+        select count(atime) from
+        (
+        select DATE_SUB(CURDATE(),INTERVAL WEEKDAY(CURDATE()) DAY) cday
+        UNION
+        select DATE_ADD(DATE_SUB(CURDATE(),INTERVAL WEEKDAY(CURDATE()) DAY),INTERVAL 1 DAY) cday
+        UNION
+        select DATE_ADD(DATE_SUB(CURDATE(),INTERVAL WEEKDAY(CURDATE()) DAY),INTERVAL 2 DAY) cday
+        UNION
+        select DATE_ADD(DATE_SUB(CURDATE(),INTERVAL WEEKDAY(CURDATE()) DAY),INTERVAL 3 DAY) cday
+        UNION
+        select DATE_ADD(DATE_SUB(CURDATE(),INTERVAL WEEKDAY(CURDATE()) DAY),INTERVAL 4 DAY) cday
+        UNION
+        select DATE_ADD(DATE_SUB(CURDATE(),INTERVAL WEEKDAY(CURDATE()) DAY),INTERVAL 5 DAY) cday
+        UNION
+        select DATE_ADD(DATE_SUB(CURDATE(),INTERVAL WEEKDAY(CURDATE()) DAY),INTERVAL 6 DAY) cday
+        ) t left join
+        cm_visits on t.cday = DATE_FORMAT(atime,'%Y-%m-%d')
+        and atime >= DATE_SUB(CURDATE(),INTERVAL WEEKDAY(CURDATE()) DAY)
+        and atime <![CDATA[ <= ]]> NOW()
+        GROUP BY DATE_FORMAT(cday,'%Y-%m-%d')
+    </select>
+    <select id="getMonthData" resultType="java.lang.Integer">
+        select count(1) from cm_visits
+        where atime >= DATE_FORMAT(NOW(),'%Y-%m')
+        and atime  <![CDATA[ <= ]]> NOW()
+        GROUP BY DATE_FORMAT(atime,'%d')
+    </select>
+
+    <insert id="insertCmVisits" parameterType="CmVisits" useGeneratedKeys="true" keyProperty="vid">
+        insert into cm_visits
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="mName != null and mName != ''">m_name,</if>
+            <if test="atime != null">atime,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="mName != null and mName != ''">#{mName},</if>
+            <if test="atime != null">#{atime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCmVisits" parameterType="CmVisits">
+        update cm_visits
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="mName != null and mName != ''">m_name = #{mName},</if>
+            <if test="atime != null">atime = #{atime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where vid = #{vid}
+    </update>
+
+    <delete id="deleteCmVisitsById" parameterType="Long">
+        delete from cm_visits where vid = #{vid}
+    </delete>
+
+    <delete id="deleteCmVisitsByIds" parameterType="String">
+        delete from cm_visits where vid in 
+        <foreach item="vid" collection="array" open="(" separator="," close=")">
+            #{vid}
+        </foreach>
+    </delete>
+
+</mapper>

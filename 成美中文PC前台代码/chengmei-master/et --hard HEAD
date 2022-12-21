@@ -1,0 +1,307 @@
+[33mcommit 723e5427fe3876b123202775adada273b06b72a1[m[33m ([m[1;36mHEAD -> [m[1;32mTema[m[33m)[m
+Author: xiyan <2524508361@qq.com>
+Date:   Wed Jun 16 00:47:38 2021 +0800
+
+    6.16-00:47
+
+[33mcommit 10bb83132dea369b1bdaf1e609af5c44d1d3dde8[m
+Author: xiyan <2524508361@qq.com>
+Date:   Tue Jun 15 22:29:12 2021 +0800
+
+    添加图片请求6.15:22.30
+
+[33mcommit 8959ae7ce2b2c4c7a7ad7e4f7474ff47ff7b29f7[m
+Author: xiyan <2524508361@qq.com>
+Date:   Tue Jun 15 17:28:31 2021 +0800
+
+    添加步骤滚动
+
+[33mcommit f29901d305b2cb8dfadf1ceaaf33f96feec9be60[m[33m ([m[1;31morigin/newteam[m[33m)[m
+Author: xiyan <2524508361@qq.com>
+Date:   Tue Jun 15 13:28:06 2021 +0800
+
+    添加访问接口
+
+[33mcommit fa1393e05c12ccf0e43d84b6750cafc0c175080f[m
+Merge: a6846fb bcfa23d
+Author: xiyan <2524508361@qq.com>
+Date:   Fri Jun 11 10:38:31 2021 +0800
+
+    111111111111
+
+[33mcommit a6846fb42fd9409386e7d6d34e21a026b6f7ba3f[m
+Author: xiyan <2524508361@qq.com>
+Date:   Tue Jun 8 23:35:20 2021 +0800
+
+    111合并
+
+[33mcommit fe16521ef726ff2344b0e4b725c452aa4417cb49[m
+Merge: c0be727 9b133c0
+Author: xiyan <2524508361@qq.com>
+Date:   Tue Jun 8 22:50:30 2021 +0800
+
+    2021.6.8
+
+[33mcommit bcfa23db789c8bc7bc1c6738316236a7de80e1c7[m[33m ([m[1;32mnewteam[m[33m)[m
+Author: xiyan <2524508361@qq.com>
+Date:   Tue Jun 8 22:39:17 2021 +0800
+
+    完善页面，添加自动轮播效果
+
+[33mcommit 9b133c020fcfb7c6244017d2cb38f5919012a16d[m
+Author: MoFeng29 <1962440702@qq.com>
+Date:   Mon Jun 7 23:30:09 2021 +0800
+
+    更新
+
+[33mcommit 5e1fe6130ecf0bc543b4b1eef5b3d9396bdc340a[m
+Author: xiyan <2524508361@qq.com>
+Date:   Mon Jun 7 20:56:28 2021 +0800
+
+    添加页面详情功能
+
+[33mcommit e01e1499f081fa0877c9a6177960287823d6b0a3[m
+Author: MoFeng29 <1962440702@qq.com>
+Date:   Sun Jun 6 23:01:04 2021 +0800
+
+    关于我们
+
+[33mcommit b39f0355bf064198c5da61321bd29e9692602ad2[m
+Author: MoFeng29 <1962440702@qq.com>
+Date:   Sun Jun 6 21:27:26 2021 +0800
+
+    优化
+
+[33mcommit 78820c2348a03b2f5631aa231cda184410aaa90b[m
+Author: xiyan <2524508361@qq.com>
+Date:   Sat Jun 5 23:27:55 2021 +0800
+
+    详情弹窗
+
+[33mcommit 720580e53dff51a57f1ada714eb589eea7918a14[m
+Author: xiyan <2524508361@qq.com>
+Date:   Sat Jun 5 12:30:24 2021 +0800
+
+    修改show轮播
+
+[33mcommit c0be727b7d1a1b885b57eb5ccfee2fb414a09baf[m
+Merge: eadb58c 9134dcd
+Author: xiyan <2524508361@qq.com>
+Date:   Sat Jun 5 00:38:27 2021 +0800
+
+    第一次合并
+
+[33mcommit 9134dcd8a378575f8bdca35f5ab86ab020efc067[m
+Author: xiyan <2524508361@qq.com>
+Date:   Sat Jun 5 00:08:01 2021 +0800
+
+    优化
+
+[33mcommit eadb58c46f3628aaa8528cedad692dcd3bdf3475[m
+Author: MoFeng29 <1962440702@qq.com>
+Date:   Fri Jun 4 22:43:50 2021 +0800
+
+    封装axios
+
+[33mcommit 8f1bd104cec0ee3a4e2b7e8fe1a92a6ea248e3f8[m
+Merge: bc6e915 f0d7030
+Author: 墨峰 <1962440702@qq.com>
+Date:   Wed Jun 2 23:56:40 2021 +0800
+
+    !1 首页和其他优化
+    Merge pull request !1 from 墨峰/home
+
+[33mcommit f0d7030c4a2b5e2fef1224a9583715ebc90d9630[m[33m ([m[1;31morigin/home[m[33m)[m
+Author: MoFeng29 <1962440702@qq.com>
+Date:   Wed Jun 2 23:55:15 2021 +0800
+
+    优化
+
+[33mcommit 6e1e6b37f6f27e8a356eceeb5b3007bde3a61083[m
+Merge: 1a82e24 bc6e915
+Author: MoFeng29 <1962440702@qq.com>
+Date:   Wed Jun 2 23:42:23 2021 +0800
+
+    合并master
+
+[33mcommit bc6e915feac694a2187709f32b96b09fb6f8e390[m
+Author: MoFeng29 <1962440702@qq.com>
+Date:   Wed Jun 2 23:38:50 2021 +0800
+
+    删除无用代码
+
+[33mcommit 284ed74ef14246fe3568d1ec8ea8095d8bac3d7b[m
+Merge: e181e74 a41b914
+Author: 高试科 <2832491856@qq.com>
+Date:   Wed Jun 2 22:54:45 2021 +0800
+
+    提交
+
+[33mcommit 1a82e248cb37dafbf413d3587d2daf00ecce92c2[m
+Author: MoFeng29 <1962440702@qq.com>
+Date:   Wed Jun 2 22:50:36 2021 +0800
+
+    调整
+
+[33mcommit a41b914b53ead22e041c26613d2554d200b38f42[m
+Author: 高试科 <2832491856@qq.com>
+Date:   Wed Jun 2 22:38:29 2021 +0800
+
+    准备合并
+
+[33mcommit 84a79450d42d752da7bd0c14aedcc32a7afb5520[m[33m ([m[1;31morigin/newsletter[m[33m)[m
+Author: 高试科 <2832491856@qq.com>
+Date:   Wed Jun 2 22:04:09 2021 +0800
+
+    可以合并
+
+[33mcommit 2664e576fc4f11a29b2d594ed63bb731fa8e6a79[m
+Author: 高试科 <2832491856@qq.com>
+Date:   Wed Jun 2 21:51:30 2021 +0800
+
+    可以合并
+
+[33mcommit c042e130feaa5973b821695a5253c1d65f88c8c3[m
+Author: 高试科 <2832491856@qq.com>
+Date:   Wed Jun 2 20:45:51 2021 +0800
+
+    OK
+
+[33mcommit 46e23d78a608e852671de6c1e26c93a0a6d601a3[m
+Author: 高试科 <2832491856@qq.com>
+Date:   Wed Jun 2 20:44:54 2021 +0800
+
+    模块修改ok
+
+[33mcommit 5d11aa2986071b766d6210f7e96246bbd1d873ca[m
+Author: 高试科 <2832491856@qq.com>
+Date:   Wed Jun 2 19:55:37 2021 +0800
+
+    查看
+
+[33mcommit 2623749dc26958137ca28ceaf82fe4690d983991[m
+Author: MoFeng29 <1962440702@qq.com>
+Date:   Wed Jun 2 17:48:37 2021 +0800
+
+    首页更新
+
+[33mcommit cafb988a893c5600ad0ac314099c190624cdd09a[m
+Author: 高试科 <2832491856@qq.com>
+Date:   Wed Jun 2 14:51:52 2021 +0800
+
+    新需求已基本完成，还待完善
+
+[33mcommit 50299f31a0cf579c20d3e907e08e5a0bc9c45367[m
+Author: MoFeng29 <1962440702@qq.com>
+Date:   Wed Jun 2 00:07:52 2021 +0800
+
+    更新
+
+[33mcommit d4ca2b61606b753765e3a6ac444785a8de26299a[m[33m ([m[1;32mnewsletter[m[33m)[m
+Author: xiyan <2524508361@qq.com>
+Date:   Tue Jun 1 23:35:52 2021 +0800
+
+    优化info和team页面 新增show页面
+
+[33mcommit 129b80dd07ef84c35a5fb4379dfe48203ccb71ca[m
+Author: MoFeng29 <1962440702@qq.com>
+Date:   Tue Jun 1 18:13:25 2021 +0800
+
+    更新
+
+[33mcommit 284fce1532d214034658d9ce0fd4cb0c8241493d[m
+Author: 高试科 <2832491856@qq.com>
+Date:   Tue Jun 1 04:29:20 2021 +0800
+
+    修改了结构,添加了新功能
+
+[33mcommit 9c81f2e111f32d47be00aaafbc6c6548c5ca12f5[m
+Author: 高试科 <2832491856@qq.com>
+Date:   Tue Jun 1 03:29:17 2021 +0800
+
+    添加功能+结构修改成功
+
+[33mcommit 0abc32e3e206689651af7db8c80c509c6682b67e[m
+Author: MoFeng29 <1962440702@qq.com>
+Date:   Mon May 31 23:42:19 2021 +0800
+
+    提交
+
+[33mcommit 2ca6c7a937fa95fb44787a340eef5d40fe90e3c2[m
+Merge: 8fe0bc6 14c599a
+Author: hezhangc <517270843@qq.com>
+Date:   Mon May 31 11:16:38 2021 +0800
+
+    更新样式
+
+[33mcommit 8fe0bc62d3f752f72aaa24afb59409017a0abf3c[m
+Author: hezhangc <517270843@qq.com>
+Date:   Mon May 31 11:05:17 2021 +0800
+
+    修改样式
+
+[33mcommit 14c599a3c596de45d78cee849caa4275ac0f7090[m
+Author: 高试科 <2832491856@qq.com>
+Date:   Mon May 31 10:31:09 2021 +0800
+
+    添加了新功能修改了结构
+
+[33mcommit 7cde16fae9dc4484750350ba3ad904e26c7e31b9[m
+Author: MoFeng29 <1962440702@qq.com>
+Date:   Sun May 30 23:43:36 2021 +0800
+
+    更新
+
+[33mcommit 2295ce85b991dcfe0f7936e1e64e0d489b0941cc[m
+Author: xiyan <2524508361@qq.com>
+Date:   Sun May 30 16:05:00 2021 +0800
+
+    项目合作/基金会动态
+
+[33mcommit 4d76adb33ed2f82dc0e0cd79bf038ae02bdd5eef[m
+Author: xiyan <2524508361@qq.com>
+Date:   Sat May 29 15:11:19 2021 +0800
+
+    项目展示
+
+[33mcommit 6e1caf4657ca17ed9f29e45c592c15c13f9d5c16[m
+Author: 高试科 <2832491856@qq.com>
+Date:   Sat May 29 00:21:40 2021 +0800
+
+    进一步完善newsletter  supportus
+
+[33mcommit f479df9a4971b44a0727b6b6e21bcb3dac91dbe9[m
+Author: 高试科 <2832491856@qq.com>
+Date:   Sat May 29 00:03:54 2021 +0800
+
+    进一步完善newsletter  supportus
+
+[33mcommit 90550b555c97312d5d85354e1a01275747900c11[m
+Author: 高试科 <2832491856@qq.com>
+Date:   Fri May 28 17:28:58 2021 +0800
+
+    完善支持我们和报刊
+
+[33mcommit f44031cee8b09d8ee9fbba5203c9afbb55f5eede[m
+Author: 高试科 <2832491856@qq.com>
+Date:   Fri May 28 16:56:13 2021 +0800
+
+    支持我们模块完成，报刊也基本完成
+
+[33mcommit 79ef1cafa67fe6d25951dfed8d8cad27aadda74b[m
+Author: MoFeng29 <1962440702@qq.com>
+Date:   Thu May 27 23:54:00 2021 +0800
+
+    首页板块调整
+
+[33mcommit 5545470ccc6131598662d8f3b71d25daf0b1e984[m
+Author: 高试科 <2832491856@qq.com>
+Date:   Thu May 27 17:16:32 2021 +0800
+
+    宣传报刊-优化
+
+[33mcommit 84ddf0fe512d029db9a3e868edac0051d0abbe69[m
+Author: 高试科 <2832491856@qq.com>
+Date:   Thu May 27 13:02:57 2021 +0800
+
+    newsletter

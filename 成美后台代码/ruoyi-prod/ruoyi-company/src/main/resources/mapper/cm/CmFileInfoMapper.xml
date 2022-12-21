@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cm.mapper.CmFileInfoMapper">
+    
+    <resultMap type="CmFileInfo" id="CmFileInfoResult">
+        <result property="fId"    column="f_id"    />
+        <result property="fileType"    column="file_type"    />
+        <result property="fileName"    column="file_name"    />
+        <result property="fileSize"    column="file_size"    />
+        <result property="fileAddr"    column="file_addr"    />
+        <result property="fileUrl"    column="file_url"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+
+    </resultMap>
+
+    <sql id="selectCmFileInfoVo">
+        select f_id, file_type, file_name, file_size, file_addr,file_url, create_by, create_time, update_by, update_time from cm_file_info
+    </sql>
+
+    <select id="selectCmFileInfoList" parameterType="CmFileInfo" resultMap="CmFileInfoResult">
+        <include refid="selectCmFileInfoVo"/>
+        <where>  
+            <if test="fileType != null  and fileType != ''"> and file_type = #{fileType}</if>
+            <if test="fileName != null  and fileName != ''"> and file_name like concat('%', #{fileName}, '%')</if>
+        </where>
+        order by create_time desc
+    </select>
+    
+    <select id="selectCmFileInfoById" parameterType="Long" resultMap="CmFileInfoResult">
+        <include refid="selectCmFileInfoVo"/>
+        where f_id = #{fId}
+    </select>
+
+    <select id="selectCmFileInfoNotUse" resultMap="CmFileInfoResult">
+        <include refid="selectCmFileInfoVo"/> t
+        where t.file_type = 0
+          and not exists(
+            select 1 from
+            (
+            select bg_image as tid from  cm_article
+            union
+            select img_id from cm_banner_config
+            union
+            select wx_img from cm_base_info
+            UNION
+            select orphan_weixin from cm_base_info
+            UNION
+            select orphan_zhifubao from cm_base_info
+            UNION
+            select girl_weixin from cm_base_info
+            UNION
+            select girl_zhifubao from cm_base_info
+            UNION
+            select bg_image from cm_big_event
+            UNION
+            select menu_img from cm_menu
+            ) temp where t.f_id = temp.tid
+        )
+
+    </select>
+
+    <insert id="insertCmFileInfo" parameterType="CmFileInfo" useGeneratedKeys="true" keyProperty="fId">
+        insert into cm_file_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fileType != null">file_type,</if>
+            <if test="fileName != null and fileName != ''">file_name,</if>
+            <if test="fileSize != null">file_size,</if>
+            <if test="fileAddr != null and fileAddr != ''">file_addr,</if>
+            <if test="fileUrl != null and fileUrl != ''">file_url,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="fileType != null">#{fileType},</if>
+            <if test="fileName != null and fileName != ''">#{fileName},</if>
+            <if test="fileSize != null">#{fileSize},</if>
+            <if test="fileAddr != null and fileAddr != ''">#{fileAddr},</if>
+            <if test="fileUrl != null and fileUrl != ''">#{fileUrl},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCmFileInfo" parameterType="CmFileInfo">
+        update cm_file_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="fileType != null">file_type = #{fileType},</if>
+            <if test="fileName != null and fileName != ''">file_name = #{fileName},</if>
+            <if test="fileSize != null">file_size = #{fileSize},</if>
+            <if test="fileAddr != null and fileAddr != ''">file_addr = #{fileAddr},</if>
+            <if test="fileUrl != null and fileUrl != ''">file_url = #{fileUrl},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where f_id = #{fId}
+    </update>
+
+    <delete id="deleteCmFileInfoById" parameterType="Long">
+        delete from cm_file_info where f_id = #{fId}
+    </delete>
+
+    <delete id="deleteCmFileInfoByIds" parameterType="String">
+        delete from cm_file_info where f_id in 
+        <foreach item="fId" collection="array" open="(" separator="," close=")">
+            #{fId}
+        </foreach>
+    </delete>
+
+</mapper>

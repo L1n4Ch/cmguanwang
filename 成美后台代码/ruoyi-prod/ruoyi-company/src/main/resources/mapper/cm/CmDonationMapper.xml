@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cm.mapper.CmDonationMapper">
+    
+    <resultMap type="CmDonation" id="CmDonationResult">
+        <result property="donationId"    column="donation_id"    />
+        <result property="donationTime"    column="donation_time"    />
+        <result property="donationItem"    column="donation_item"    />
+        <result property="donationMoney"    column="donation_money"    />
+        <result property="donationCompany"    column="donation_company"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectCmDonationVo">
+        select donation_id, donation_time, donation_item, donation_money, donation_company, create_by, create_time, update_by, update_time from cm_donation
+    </sql>
+
+    <select id="selectCmDonationList" parameterType="CmDonation" resultMap="CmDonationResult">
+        <include refid="selectCmDonationVo"/>
+        <where>  
+            <if test="params.beginDonationTime != null and params.beginDonationTime != '' and params.endDonationTime != null and params.endDonationTime != ''"> and donation_time between #{params.beginDonationTime} and #{params.endDonationTime}</if>
+            <if test="donationItem != null  and donationItem != ''"> and donation_item like concat('%', #{donationItem}, '%')</if>
+            <if test="donationMoney != null "> and donation_money &lt;= #{donationMoney}</if>
+            <if test="donationCompany != null  and donationCompany != ''"> and donation_company like concat('%', #{donationCompany}, '%')</if>
+            <if test="donationTime != null"> and DATE_FORMAT(donation_time,'%Y-%m-%d') = DATE_FORMAT(#{donationTime},'%Y-%m-%d') </if>
+        </where>
+        order by donation_time desc
+    </select>
+    
+    <select id="selectCmDonationById" parameterType="Long" resultMap="CmDonationResult">
+        <include refid="selectCmDonationVo"/>
+        where donation_id = #{donationId}
+    </select>
+
+    <select id="sumMoney" resultType="java.math.BigDecimal">
+       select sum(donation_money)
+       from cm_donation
+        <where>
+            <if test="donationStart != null and donationStart != ''">
+                and donation_time >= #{donationStart}
+            </if>
+            <if test="donationEnd != null and donationEnd != ''">
+                and  donation_time &lt;= #{donationEnd}
+            </if>
+
+            <if test="donationCompany != null  and donationCompany != ''"> and donation_company like concat('%', #{donationCompany}, '%')</if>
+        </where>
+    </select>
+
+    <insert id="insertCmDonation" parameterType="CmDonation" useGeneratedKeys="true" keyProperty="donationId">
+        insert into cm_donation
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="donationTime != null">donation_time,</if>
+            <if test="donationItem != null">donation_item,</if>
+            <if test="donationMoney != null">donation_money,</if>
+            <if test="donationCompany != null and donationCompany != ''">donation_company,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="donationTime != null">#{donationTime},</if>
+            <if test="donationItem != null">#{donationItem},</if>
+            <if test="donationMoney != null">#{donationMoney},</if>
+            <if test="donationCompany != null and donationCompany != ''">#{donationCompany},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCmDonation" parameterType="CmDonation">
+        update cm_donation
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="donationTime != null">donation_time = #{donationTime},</if>
+            <if test="donationItem != null">donation_item = #{donationItem},</if>
+            <if test="donationMoney != null">donation_money = #{donationMoney},</if>
+            <if test="donationCompany != null and donationCompany != ''">donation_company = #{donationCompany},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where donation_id = #{donationId}
+    </update>
+
+    <delete id="deleteCmDonationById" parameterType="Long">
+        delete from cm_donation where donation_id = #{donationId}
+    </delete>
+
+    <delete id="deleteCmDonationByIds" parameterType="String">
+        delete from cm_donation where donation_id in 
+        <foreach item="donationId" collection="array" open="(" separator="," close=")">
+            #{donationId}
+        </foreach>
+    </delete>
+
+</mapper>

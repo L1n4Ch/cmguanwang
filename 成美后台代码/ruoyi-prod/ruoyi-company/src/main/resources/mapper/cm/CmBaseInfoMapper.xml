@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cm.mapper.CmBaseInfoMapper">
+    
+    <resultMap type="CmBaseInfo" id="CmBaseInfoResult">
+        <result property="baseId"    column="base_id"    />
+        <result property="logo"    column="logo"    />
+        <result property="name"    column="name"    />
+        <result property="wxImg"    column="wx_img"    />
+        <result property="qq"    column="qq"    />
+        <result property="xlBlog"    column="xl_blog"    />
+        <result property="txBlog"    column="tx_blog"    />
+        <result property="wxName"    column="wx_name"    />
+        <result property="address"    column="address"    />
+        <result property="website"    column="website"    />
+        <result property="icp"    column="icp"    />
+        <result property="iphone"    column="iphone"    />
+        <result property="email"    column="email"    />
+        <result property="fax"    column="fax"    />
+        <result property="dTime"    column="d_time"    />
+        <result property="dTotalSum"    column="d_total_sum"    />
+        <result property="dTotalOut"    column="d_total_out"    />
+        <result property="dCount"    column="d_count"    />
+        <result property="orphanWeixin"    column="orphan_weixin"    />
+        <result property="orphanZhifubao"    column="orphan_zhifubao"    />
+        <result property="girlWeixin"    column="girl_weixin"    />
+        <result property="girlZhifubao"    column="girl_zhifubao"    />
+    </resultMap>
+
+    <sql id="selectCmBaseInfoVo">
+        select base_id, logo, name, wx_img, qq, xl_blog, tx_blog, wx_name, address, website, icp, iphone, email, fax, d_time, d_total_sum, d_total_out, d_count, orphan_weixin, orphan_zhifubao, girl_weixin, girl_zhifubao from cm_base_info
+    </sql>
+
+    <select id="selectCmBaseInfoList" parameterType="CmBaseInfo" resultMap="CmBaseInfoResult">
+        <include refid="selectCmBaseInfoVo"/>
+        <where>  
+            <if test="logo != null "> and logo = #{logo}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="wxImg != null "> and wx_img = #{wxImg}</if>
+            <if test="qq != null  and qq != ''"> and qq = #{qq}</if>
+            <if test="xlBlog != null  and xlBlog != ''"> and xl_blog = #{xlBlog}</if>
+            <if test="txBlog != null  and txBlog != ''"> and tx_blog = #{txBlog}</if>
+            <if test="wxName != null  and wxName != ''"> and wx_name like concat('%', #{wxName}, '%')</if>
+            <if test="address != null  and address != ''"> and address = #{address}</if>
+            <if test="website != null  and website != ''"> and website = #{website}</if>
+            <if test="icp != null  and icp != ''"> and icp = #{icp}</if>
+            <if test="iphone != null  and iphone != ''"> and iphone = #{iphone}</if>
+            <if test="email != null  and email != ''"> and email = #{email}</if>
+            <if test="fax != null  and fax != ''"> and fax = #{fax}</if>
+            <if test="dTime != null "> and d_time = #{dTime}</if>
+            <if test="dTotalSum != null "> and d_total_sum = #{dTotalSum}</if>
+            <if test="dTotalOut != null "> and d_total_out = #{dTotalOut}</if>
+            <if test="dCount != null "> and d_count = #{dCount}</if>
+            <if test="orphanWeixin != null "> and orphan_weixin = #{orphanWeixin}</if>
+            <if test="orphanZhifubao != null "> and orphan_zhifubao = #{orphanZhifubao}</if>
+            <if test="girlWeixin != null "> and girl_weixin = #{girlWeixin}</if>
+            <if test="girlZhifubao != null "> and girl_zhifubao = #{girlZhifubao}</if>
+        </where>
+    </select>
+    
+    <select id="selectCmBaseInfoById" parameterType="Long" resultMap="CmBaseInfoResult">
+        <include refid="selectCmBaseInfoVo"/>
+        where base_id = #{baseId}
+    </select>
+        
+    <insert id="insertCmBaseInfo" parameterType="CmBaseInfo" useGeneratedKeys="true" keyProperty="baseId">
+        insert into cm_base_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="logo != null">logo,</if>
+            <if test="name != null and name != ''">name,</if>
+            <if test="wxImg != null">wx_img,</if>
+            <if test="qq != null and qq != ''">qq,</if>
+            <if test="xlBlog != null and xlBlog != ''">xl_blog,</if>
+            <if test="txBlog != null and txBlog != ''">tx_blog,</if>
+            <if test="wxName != null and wxName != ''">wx_name,</if>
+            <if test="address != null and address != ''">address,</if>
+            <if test="website != null and website != ''">website,</if>
+            <if test="icp != null and icp != ''">icp,</if>
+            <if test="iphone != null and iphone != ''">iphone,</if>
+            <if test="email != null and email != ''">email,</if>
+            <if test="fax != null and fax != ''">fax,</if>
+            <if test="dTime != null">d_time,</if>
+            <if test="dTotalSum != null">d_total_sum,</if>
+            <if test="dTotalOut != null">d_total_out,</if>
+            <if test="dCount != null">d_count,</if>
+            <if test="orphanWeixin != null">orphan_weixin,</if>
+            <if test="orphanZhifubao != null">orphan_zhifubao,</if>
+            <if test="girlWeixin != null">girl_weixin,</if>
+            <if test="girlZhifubao != null">girl_zhifubao,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="logo != null">#{logo},</if>
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="wxImg != null">#{wxImg},</if>
+            <if test="qq != null and qq != ''">#{qq},</if>
+            <if test="xlBlog != null and xlBlog != ''">#{xlBlog},</if>
+            <if test="txBlog != null and txBlog != ''">#{txBlog},</if>
+            <if test="wxName != null and wxName != ''">#{wxName},</if>
+            <if test="address != null and address != ''">#{address},</if>
+            <if test="website != null and website != ''">#{website},</if>
+            <if test="icp != null and icp != ''">#{icp},</if>
+            <if test="iphone != null and iphone != ''">#{iphone},</if>
+            <if test="email != null and email != ''">#{email},</if>
+            <if test="fax != null and fax != ''">#{fax},</if>
+            <if test="dTime != null">#{dTime},</if>
+            <if test="dTotalSum != null">#{dTotalSum},</if>
+            <if test="dTotalOut != null">#{dTotalOut},</if>
+            <if test="dCount != null">#{dCount},</if>
+            <if test="orphanWeixin != null">#{orphanWeixin},</if>
+            <if test="orphanZhifubao != null">#{orphanZhifubao},</if>
+            <if test="girlWeixin != null">#{girlWeixin},</if>
+            <if test="girlZhifubao != null">#{girlZhifubao},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCmBaseInfo" parameterType="CmBaseInfo">
+        update cm_base_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="logo != null">logo = #{logo},</if>
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="wxImg != null">wx_img = #{wxImg},</if>
+            <if test="qq != null and qq != ''">qq = #{qq},</if>
+            <if test="xlBlog != null and xlBlog != ''">xl_blog = #{xlBlog},</if>
+            <if test="txBlog != null and txBlog != ''">tx_blog = #{txBlog},</if>
+            <if test="wxName != null and wxName != ''">wx_name = #{wxName},</if>
+            <if test="address != null and address != ''">address = #{address},</if>
+            <if test="website != null and website != ''">website = #{website},</if>
+            <if test="icp != null and icp != ''">icp = #{icp},</if>
+            <if test="iphone != null and iphone != ''">iphone = #{iphone},</if>
+            <if test="email != null and email != ''">email = #{email},</if>
+            <if test="fax != null and fax != ''">fax = #{fax},</if>
+            <if test="dTime != null">d_time = #{dTime},</if>
+            <if test="dTotalSum != null">d_total_sum = #{dTotalSum},</if>
+            <if test="dTotalOut != null">d_total_out = #{dTotalOut},</if>
+            <if test="dCount != null">d_count = #{dCount},</if>
+            <if test="orphanWeixin != null">orphan_weixin = #{orphanWeixin},</if>
+            <if test="orphanZhifubao != null">orphan_zhifubao = #{orphanZhifubao},</if>
+            <if test="girlWeixin != null">girl_weixin = #{girlWeixin},</if>
+            <if test="girlZhifubao != null">girl_zhifubao = #{girlZhifubao},</if>
+        </trim>
+        where base_id = #{baseId}
+    </update>
+
+    <delete id="deleteCmBaseInfoById" parameterType="Long">
+        delete from cm_base_info where base_id = #{baseId}
+    </delete>
+
+    <delete id="deleteCmBaseInfoByIds" parameterType="String">
+        delete from cm_base_info where base_id in 
+        <foreach item="baseId" collection="array" open="(" separator="," close=")">
+            #{baseId}
+        </foreach>
+    </delete>
+
+</mapper>

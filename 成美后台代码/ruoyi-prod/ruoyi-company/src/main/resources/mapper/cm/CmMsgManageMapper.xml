@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cm.mapper.CmMsgManageMapper">
+
+    <resultMap type="CmMsgManage" id="CmMsgManageResult">
+        <result property="msgId"    column="msg_id"    />
+        <result property="msgUse"    column="msg_use"    />
+        <result property="msgPhone"    column="msg_phone"    />
+        <result property="msgEmail"    column="msg_email"    />
+        <result property="msgDetail"    column="msg_detail"    />
+        <result property="fyMsgDetail"    column="fy_msg_detail"    />
+        <result property="msgTime"    column="msg_time"    />
+        <result property="msgAnswer"    column="msg_answer"    />
+        <result property="fyMsgAnswer"    column="fy_msg_answer"    />
+        <result property="msgAnswerTime"    column="msg_answer_time"    />
+    </resultMap>
+
+    <sql id="selectCmMsgManageVo">
+        select msg_id, msg_use, msg_phone, msg_email, msg_detail, fy_msg_detail, msg_time, msg_answer, fy_msg_answer, msg_answer_time from cm_msg_manage
+    </sql>
+
+    <select id="selectCmMsgManageList" parameterType="CmMsgManage" resultMap="CmMsgManageResult">
+        <include refid="selectCmMsgManageVo"/>
+        <where>
+            <if test="msgUse != null  and msgUse != ''"> and msg_use like concat('%', #{msgUse}, '%')</if>
+            <if test="msgPhone != null  and msgPhone != ''"> and msg_phone = #{msgPhone}</if>
+            <if test="msgEmail != null  and msgEmail != ''"> and msg_email = #{msgEmail}</if>
+            <if test="msgDetail != null  and msgDetail != ''"> and msg_detail = #{msgDetail}</if>
+            <if test="fyMsgDetail != null "> and fy_msg_detail = #{fyMsgDetail}</if>
+            <if test="params.beginMsgTime != null and params.beginMsgTime != '' and params.endMsgTime != null and params.endMsgTime != ''"> and msg_time between #{params.beginMsgTime} and #{params.endMsgTime}</if>
+            <if test="msgAnswer != null  and msgAnswer != ''"> and msg_answer = #{msgAnswer}</if>
+            <if test="fyMsgAnswer != null "> and fy_msg_answer = #{fyMsgAnswer}</if>
+            <if test="msgAnswerTime != null "> and msg_answer_time = #{msgAnswerTime}</if>
+        </where>
+        order by msg_id desc
+    </select>
+
+    <select id="selectCmMsgManageById" parameterType="Long" resultMap="CmMsgManageResult">
+        <include refid="selectCmMsgManageVo"/>
+        where msg_id = #{msgId}
+    </select>
+
+    <insert id="insertCmMsgManage" parameterType="CmMsgManage" useGeneratedKeys="true" keyProperty="msgId">
+        insert into cm_msg_manage
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="msgUse != null and msgUse != ''">msg_use,</if>
+            <if test="msgPhone != null and msgPhone != ''">msg_phone,</if>
+            <if test="msgEmail != null and msgEmail != ''">msg_email,</if>
+            <if test="msgDetail != null and msgDetail != ''">msg_detail,</if>
+            <if test="fyMsgDetail != null ">fy_msg_detail,</if>
+            <if test="msgTime != null">msg_time,</if>
+            <if test="msgAnswer != null">msg_answer,</if>
+            <if test="fyMsgAnswer != null">fy_msg_answer,</if>
+            <if test="msgAnswerTime != null">msg_answer_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="msgUse != null and msgUse != ''">#{msgUse},</if>
+            <if test="msgPhone != null and msgPhone != ''">#{msgPhone},</if>
+            <if test="msgEmail != null and msgEmail != ''">#{msgEmail},</if>
+            <if test="msgDetail != null and msgDetail != ''">#{msgDetail},</if>
+            <if test="fyMsgDetail != null ">#{fyMsgDetail},</if>
+            <if test="msgTime != null">#{msgTime},</if>
+            <if test="msgAnswer != null">#{msgAnswer},</if>
+            <if test="fyMsgAnswer != null">#{fyMsgAnswer},</if>
+            <if test="msgAnswerTime != null">#{msgAnswerTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCmMsgManage" parameterType="CmMsgManage">
+        update cm_msg_manage
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="msgUse != null and msgUse != ''">msg_use = #{msgUse},</if>
+            <if test="msgPhone != null and msgPhone != ''">msg_phone = #{msgPhone},</if>
+            <if test="msgEmail != null and msgEmail != ''">msg_email = #{msgEmail},</if>
+            <if test="msgDetail != null and msgDetail != ''">msg_detail = #{msgDetail},</if>
+            <if test="fyMsgDetail != null ">fy_msg_detail = #{fyMsgDetail},</if>
+            <if test="msgTime != null">msg_time = #{msgTime},</if>
+            <if test="msgAnswer != null">msg_answer = #{msgAnswer},</if>
+            <if test="fyMsgAnswer != null">fy_msg_answer = #{fyMsgAnswer},</if>
+            <if test="msgAnswerTime != null">msg_answer_time = #{msgAnswerTime},</if>
+        </trim>
+        where msg_id = #{msgId}
+    </update>
+
+    <delete id="deleteCmMsgManageById" parameterType="Long">
+        delete from cm_msg_manage where msg_id = #{msgId}
+    </delete>
+
+    <delete id="deleteCmMsgManageByIds" parameterType="String">
+        delete from cm_msg_manage where msg_id in
+        <foreach item="msgId" collection="array" open="(" separator="," close=")">
+            #{msgId}
+        </foreach>
+    </delete>
+
+</mapper>

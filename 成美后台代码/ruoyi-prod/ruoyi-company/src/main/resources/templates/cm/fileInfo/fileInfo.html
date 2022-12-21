@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('文件信息列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>文件类型：</label>
+                                <select name="fileType" th:with="type=${@dict.getType('cm_file_type')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <label>文件名称：</label>
+                                <input type="text" name="fileName"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var removeFlag = [[${@permission.hasPermi('cm:fileInfo:remove')}]];
+        var prefix = ctx + "cm/fileInfo";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "文件信息",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'fId',
+                    title: '主键',
+                    visible: false
+                },
+                {
+                    field: 'fileType',
+                    title: '文件类型',
+                    formatter: function(value, row, index) {
+                        if(value == '0'){
+                            return "图片";
+                        }
+                        if(value == '1'){
+                            return "文件";
+                        }
+                       return "其他";
+                    }
+                },
+                {
+                    field: 'fileName',
+                    title: '文件名称'
+                },
+                {
+                    field: 'fileSize',
+                    title: '文件大小',
+                    formatter: function(value, row, index) {
+                        if(value){
+                            return (parseInt(value)/1024).toFixed(2) +"kb";
+                        }
+                        return value;
+                    }
+                },
+                {
+                    field: 'fileAddr',
+                    title: '文件地址'
+                },
+                {
+                    field: 'fileUrl',
+                    title: '文件链接',
+                    formatter: function(value, row, index) {
+                        var text =value;
+                        if(row.fileType == '0'){
+                            text =  "<img src='"+ value+"' style='max-width: 30px;'><br/>" + value;
+                        }
+                        return "<a href='"+value+"' target='_blank'>"+ text +"</a>"
+                    }
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.fId + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+    </script>
+</body>
+</html>

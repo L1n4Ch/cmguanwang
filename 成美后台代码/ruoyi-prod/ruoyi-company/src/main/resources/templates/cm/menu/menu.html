@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('成美菜单列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>菜单名称：</label>
+                                <input type="text" name="menuName"/>
+                            </li>
+                            <li>
+                                <label>菜单模板：</label>
+                                <select name="menuModel" th:with="type=${@dict.getType('cm_menu_model')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <label>状态：</label>
+                                <select name="status" th:with="type=${@dict.getType('cm_status')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <label>语言：</label>
+                                <select name="languageType" th:with="type=${@dict.getType('language_type')}" id="languageType">
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <!--<li>
+                                <label>前端地址：</label>
+                                <input type="text" name="url"/>
+                            </li>-->
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.treeTable.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="add()" shiro:hasPermission="cm:menu:add">
+                    <i class="fa fa-plus"></i> 新增
+                </a>
+                <a class="btn btn-primary" onclick="edit()" shiro:hasPermission="cm:menu:edit">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-info" id="expandAllBtn">
+                    <i class="fa fa-exchange"></i> 展开/折叠
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-tree-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var addFlag = [[${@permission.hasPermi('cm:menu:add')}]];
+        var editFlag = [[${@permission.hasPermi('cm:menu:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('cm:menu:remove')}]];
+        var menuModelDatas = [[${@dict.getType('cm_menu_model')}]];
+        var statusDatas = [[${@dict.getType('cm_status')}]];
+        var languageDatas = [[${@dict.getType('language_type')}]];
+        var prefix = ctx + "cm/menu";
+
+        $(function() {
+            var options = {
+                code: "menuId",
+                parentCode: "parentId",
+                expandColumn: "1",
+                uniqueId: "menuId",
+                url: prefix + "/list",
+                createUrl: prefix + "/add/{id}?languageType={languageType}",
+                updateUrl: prefix + "/edit/{id}?languageType={languageType}",
+                removeUrl: prefix + "/remove/{id}",
+                exportUrl: prefix + "/export",
+                modalName: "成美菜单",
+                columns: [{
+                    field: 'selectItem',
+                    radio: true
+                },
+                {
+                    field: 'menuId',
+                    title: '菜单编号',
+                    align: 'left'
+                },
+                {
+                    field: 'menuName',
+                    title: '菜单名称',
+                    align: 'left'
+                },
+                {
+                    field: 'parentId',
+                    title: '父菜单编号',
+                    align: 'left'
+                },
+                {
+                    field: 'orderNum',
+                    title: '显示顺序',
+                    align: 'left'
+                },
+                {
+                    field: 'menuImg',
+                    title: '菜单背景图',
+                    align: 'left',
+                    formatter: function(value, row, index) {
+                        if( row.imageFile){
+                            return "<img src='"+ row.imageFile.fileUrl +"' style='max-width: 30px;'>";
+                        }
+                        return "";
+                    }
+                },
+                {
+                    field: 'menuModel',
+                    title: '菜单模板',
+                    align: 'left',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(menuModelDatas, value);
+                    }
+                },
+                {
+                    field: 'status',
+                    title: '状态',
+                    align: 'left',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(statusDatas, value);
+                    }
+                },
+                {
+                    field: 'url',
+                    title: '前端跳转地址',
+                    align: 'left'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    align: 'left',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="edit(\'' + row.menuId + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        // actions.push('<a class="btn btn-info  btn-xs ' + addFlag + '" href="javascript:void(0)" onclick="$.operate.add(\'' + row.menuId + '\')"><i class="fa fa-plus"></i>新增</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.menuId + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.treeTable.init(options);
+
+            // 语言选择后直接刷新菜单
+            $("#languageType").change(function (){
+                $.treeTable.search();
+            })
+        });
+
+        /**
+         * 自定义添加的方法
+         */
+        function add(){
+            var languageType = $("#languageType").val();
+            var url = table.options.createUrl.replace("{id}", "");
+            url = url.replace("{languageType}", languageType);
+            table.set();
+            $.modal.open("添加" + table.options.modalName, url);
+        }
+
+        /**
+         * 自定义修改方法
+         */
+        function edit(id){
+            var languageType = $("#languageType").val();
+            table.options.updateUrl = table.options.updateUrl.split("?")[0]+"?languageType="+languageType;
+            $.operate.edit(id);
+        }
+    </script>
+</body>
+</html>

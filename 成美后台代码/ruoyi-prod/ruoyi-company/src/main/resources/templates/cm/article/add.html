@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增文章发布')" />
+    <th:block th:include="include :: bootstrap-fileinput-css"/>
+    <th:block th:include="include :: summernote-css" />
+    <style type="text/css">
+        .modal-dialog{
+            position: relative;
+            top: 40%;
+        }
+    </style>
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-article-add">
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">语言：</label>
+                <div class="col-sm-8">
+                    <input type="hidden" th:value="${languageType}" name="languageType" id="languageType">
+                    <select  class="form-control m-b" th:with="type=${@dict.getType('language_type')}" readonly="true" disabled >
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:selected="${dict.dictValue == languageType}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">菜单：</label>
+                <div class="col-sm-8">
+                    <div class="input-group">
+                        <input id="treeId" name="menuId" type="hidden" th:value="${cmMenu?.menuId}"/>
+                        <input class="form-control" type="text" onclick="selectMenuTree()" id="treeName" readonly="true" th:value="${cmMenu?.menuName}">
+                        <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">标题：</label>
+                <div class="col-sm-8">
+                    <input name="title" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">简介：</label>
+                <div class="col-sm-8">
+                    <textarea name="introduce" class="form-control" required></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">显示顺序：</label>
+                <div class="col-sm-8">
+                    <input name="orderNum" class="form-control" type="number" maxlength="3">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">状态：</label>
+                <div class="col-sm-8">
+                    <div class="radio-box" th:each="dict : ${@dict.getType('cm_status')}">
+                        <input type="radio" th:id="${'status_' + dict.dictCode}" name="status" th:value="${dict.dictValue}" th:checked="${dict.default}">
+                        <label th:for="${'status_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">首页展示：</label>
+                <div class="col-sm-8">
+                    <div class="radio-box" th:each="dict : ${@dict.getType('cm_page_show')}">
+                        <input type="radio" th:id="${'pageShow_' + dict.dictCode}" name="pageShow" th:value="${dict.dictValue}" th:checked="${dict.default}">
+                        <label th:for="${'pageShow_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">
+                    封面图(图片最大5M)：
+                </label>
+                <div class="col-sm-8">
+<!--                    <input type="hidden" name="bgImage">-->
+<!--                    <div class="file-loading">-->
+<!--                        <input class="form-control file-upload" id="bgImage" name="imageFile" type="file">-->
+<!--                    </div>-->
+                    <input type="hidden" name="bgImage" id="bgImage">
+                    <div class="imageBox" onclick="changeImg(this)" data-key="0" data-id="bgImage" data-ratio="NaN">
+                        <img th:src="@{/img/profile.jpg}" style="max-width: 330px;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="hidden showFlag" id="articleShowFlag">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label is-required">详情：</label>
+                    <div class="col-sm-8">
+                        <input type="hidden" class="form-control" name="detail">
+                        <div class="summernote" id="detail"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="hidden showFlag" id="urlShowFlag">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label is-required">跳转的地址：</label>
+                    <div class="col-sm-8">
+                        <input name="ext" class="form-control" type="text" required>
+                    </div>
+                </div>
+            </div>
+            <div class="hidden showFlag" id="pdfShowFlag">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label is-required">上传PDF文件：</label>
+                    <div class="col-sm-8">
+                        <input type="hidden" name="extPdf" id="pdfUrl">
+                        <div class="file-loading">
+                            <input class="form-control file-upload" id="pdfFile" name="imageFile" type="file">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: bootstrap-fileinput-js"/>
+    <th:block th:include="include :: summernote-js" />
+    <script th:inline="javascript">
+        var prefix = ctx + "cm/article"
+        $("#form-article-add").validate({
+            focusCleanup: true
+        });
+
+        // 上传图片
+        function changeImg(e){
+            var imgId = $(e).attr("data-key");
+            var domId = $(e).data("id");
+            var aspectRatio = $(e).data("ratio"); // 剪切比例
+
+            var url = ctx + 'cm/common/bgImg?imgId=' + imgId +"&aspectRatio=" + aspectRatio;
+
+            // 弹出一个框进行过图像上传
+            top.layer.open({
+                type: 2,
+                area: [$(window).width()-600 + 'px', $(window).height() + 'px'],
+                fix: false,
+                //不固定
+                maxmin: true,
+                shade: 0.3,
+                title: "修改头像",
+                content: url,
+                btn: ['确定', '关闭'],
+                // 弹层外区域关闭
+                shadeClose: true,
+                yes: function(index, layero) {
+                    console.log(layero.index)
+                    var iframeWin = layero.find('iframe')[0];
+                    // 回调submitHandler方法将图片信息上传上去
+                    iframeWin.contentWindow.submitHandler(index, layero, domId,"articleBgImg",iframeWin);
+                },
+                cancel: function(index) {
+                    return true;
+                }
+            });
+        }
+        function setImg(result,domId){
+            if (result.code == web_status.SUCCESS) {
+
+                $("#" + domId).val(result.cmFileInfo.fId);
+                $("#" + domId).next().attr("data-key",result.cmFileInfo.fId);
+                $("#" + domId).next().children()[0].src =result.cmFileInfo.fileUrl;
+
+            } else if (result.code == web_status.WARNING) {
+                $.modal.alertWarning(result.msg)
+            } else {
+                $.modal.alertError(result.msg);
+            }
+        }
+
+
+        function submitHandler() {
+            // 判断图片是否上传
+            var bgImage = $("input[name='bgImage']").val();
+
+            if(bgImage){
+                if ($.validate.form()) {
+                    $.operate.save(prefix + "/add", $('#form-article-add').serialize());
+                }
+            }else{
+                $.modal.alertWarning("请先上传图片！");
+            }
+        }
+
+        $("#pdfFile").fileinput({
+            uploadUrl: ctx + "cm/common/uploadImg",
+            maxFileCount: 1,
+            autoReplace: true,
+            allowedFileExtensions: ["pdf","PDF"], //接收的文件后缀
+            showPreview: false,                 //是否显示拖拽区
+            uploadExtraData: function(previewId, index) {
+                // 额外的属性
+                return {type: "pdf"};
+            }
+        }).on('fileuploaded', function (event, data, previewId, index) {
+            // 返回图片ID
+            $("#pdfUrl").val(data.response.cmFileInfo.fileUrl)
+        }).on('fileremoved', function (event, id, index) {
+            $("#pdfUrl").val('')
+        })
+
+        // $("#bgImage").fileinput({
+        //     uploadUrl: ctx + "cm/common/uploadImg",
+        //     maxFileCount: 1,
+        //     autoReplace: true,
+        //     allowedFileExtensions: ["jpg", "png", "jpeg"], //接收的文件后缀
+        //     showPreview: true,                 //是否显示拖拽区
+        //     dropZoneTitle: '拖拽文件到这里 ',
+        //     uploadExtraData: function(previewId, index) {
+        //         // 额外的属性
+        //         return {type: "articleImg"};
+        //     }
+        // }).on('fileuploaded', function (event, data, previewId, index) {
+        //     // 返回图片ID
+        //     $("input[name='" + event.currentTarget.id + "']").val(data.response.cmFileInfo.fId)
+        // }).on('fileremoved', function (event, id, index) {
+        //     $("input[name='" + event.currentTarget.id + "']").val('')
+        // })
+
+        $(function() {
+            $('.summernote').summernote({
+                lang: 'zh-CN',
+                placeholder: '请输入内容',
+                height : 200,
+                toolbar: [
+                    ['style', ['style']], // 样式
+                    ['font', ['bold', 'underline', 'clear']],
+                    ['fontname', ['fontname']],
+                    ['fontsize', ['fontsize']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['table', ['table']],
+                    ['insert', ['link', 'picture', 'video']],
+                    ['view', ['fullscreen', 'codeview', 'help']],
+                    ['height', ['height']],
+                    ['indent',['indent']],
+                    ['outdent',['outdent']]
+                ],
+                lineHeights: [ '0.8', '1.0', '1.2', '1.4', '1.6', '1.8', '2.0', '3.0'],
+                callbacks: {
+                    onChange: function(contents, $edittable) {
+                        $("input[name='" + this.id + "']").val(contents);
+                    },
+                    onImageUpload: function(files) {
+                        var obj = this;
+                        var data = new FormData();
+                        data.append("imageFile", files[0]);
+                        data.append("type", "editorImg");
+                        $.ajax({
+                            type: "post",
+                            url: ctx + "cm/common/uploadImg",
+                            data: data,
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            dataType: 'json',
+                            success: function(result) {
+                                if (result.code == web_status.SUCCESS) {
+                                    $('#' + obj.id).summernote('insertImage', result.cmFileInfo.fileUrl);
+                                } else {
+                                    $.modal.alertError(result.msg);
+                                }
+                            },
+                            error: function(error) {
+                                $.modal.alertWarning("图片上传失败。");
+                            }
+                        });
+                    }
+                }
+            });
+        });
+
+        /*成美菜单-新增-选择父成美菜单树*/
+        function selectMenuTree() {
+            var options = {
+                title: '成美菜单选择',
+                width: "380",
+                url:  ctx + "cm/menu/selectMenuTree/" + $("#treeId").val()+"?languageType="+$("#languageType").val(),
+                callBack: doSubmit
+            };
+            $.modal.openOptions(options);
+        }
+
+        function doSubmit(index, layero){
+            var body = layer.getChildFrame('body', index);
+
+
+            //判断菜单是否配置的是文章
+            var menuId = body.find('#treeId').val();
+            $.ajax({
+                type: "post",
+                url: ctx + "cm/menu/get",
+                data: {
+                    "menuId": menuId
+                },
+                success: function(data) {
+                    if(data.imageFile && data.imageFile.rate){
+                         $(".imageBox").data("ratio",data.imageFile.rate);
+                    }else{
+                        $(".imageBox").data("ratio",NaN);
+                    }
+                    // 发布文章
+                    if(data.menuModel == 0){
+                        $(".showFlag").addClass('hidden')
+                        $("#articleShowFlag").removeClass("hidden")
+
+                        $("#treeId").val(body.find('#treeId').val());
+                        $("#treeName").val(body.find('#treeName').val());
+                        layer.close(index);
+                    }else if(data.menuModel == 1){
+                        // 图片+跳转地址
+                        $(".showFlag").addClass('hidden')
+                        $("#urlShowFlag").removeClass("hidden")
+
+                        $("#treeId").val(body.find('#treeId').val());
+                        $("#treeName").val(body.find('#treeName').val());
+                        layer.close(index);
+
+                    }else if(data.menuModel == 2){
+                        // 独立页面，不需要发布文章
+                        $(".showFlag").addClass('hidden');
+                        $.modal.alertWarning("该菜单无需发布文章！");
+                    }else if(data.menuModel == 3){
+                        $(".showFlag").addClass('hidden');
+                        $("#pdfShowFlag").removeClass("hidden")
+
+                        $("#treeId").val(body.find('#treeId').val());
+                        $("#treeName").val(body.find('#treeName').val());
+                        layer.close(index);
+                    }
+                }
+            });
+
+
+        }
+    </script>
+</body>
+</html>

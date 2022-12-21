@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cm.mapper.CmRecruitMapper">
+    
+    <resultMap type="CmRecruit" id="CmRecruitResult">
+        <result property="positionId"    column="position_id"    />
+        <result property="positionName"    column="position_name"    />
+        <result property="positionObject"    column="position_object"    />
+        <result property="positionAddress"    column="position_address"    />
+        <result property="needNum"    column="need_num"    />
+        <result property="positionDetail"    column="position_detail"    />
+        <result property="status"    column="status"    />
+        <result property="publishTime"    column="publish_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="edu"    column="edu"    />
+    </resultMap>
+
+    <sql id="selectCmRecruitVo">
+        select position_id, position_name, position_object, position_address, need_num, position_detail, status, publish_time, create_by, create_time, update_by, update_time, edu from cm_recruit
+    </sql>
+
+    <select id="selectCmRecruitList" parameterType="CmRecruit" resultMap="CmRecruitResult">
+        <include refid="selectCmRecruitVo"/>
+        <where>  
+            <if test="positionName != null  and positionName != ''"> and position_name like concat('%', #{positionName}, '%')</if>
+            <if test="positionObject != null  and positionObject != ''"> and position_object = #{positionObject}</if>
+            <if test="positionAddress != null  and positionAddress != ''"> and position_address like concat('%', #{positionAddress}, '%')</if>
+            <if test="needNum != null "> and need_num = #{needNum}</if>
+            <if test="positionDetail != null  and positionDetail != ''"> and position_detail = #{positionDetail}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="params.beginPublishTime != null and params.beginPublishTime != '' and params.endPublishTime != null and params.endPublishTime != ''"> and publish_time between #{params.beginPublishTime} and #{params.endPublishTime}</if>
+        </where>
+        order by create_time desc
+    </select>
+    
+    <select id="selectCmRecruitById" parameterType="Long" resultMap="CmRecruitResult">
+        <include refid="selectCmRecruitVo"/>
+        where position_id = #{positionId}
+    </select>
+        
+    <insert id="insertCmRecruit" parameterType="CmRecruit" useGeneratedKeys="true" keyProperty="positionId">
+        insert into cm_recruit
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="positionName != null and positionName != ''">position_name,</if>
+            <if test="positionObject != null and positionObject != ''">position_object,</if>
+            <if test="positionAddress != null and positionAddress != ''">position_address,</if>
+            <if test="needNum != null">need_num,</if>
+            <if test="positionDetail != null and positionDetail != ''">position_detail,</if>
+            <if test="status != null">status,</if>
+            <if test="publishTime != null">publish_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="edu != null">edu,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="positionName != null and positionName != ''">#{positionName},</if>
+            <if test="positionObject != null and positionObject != ''">#{positionObject},</if>
+            <if test="positionAddress != null and positionAddress != ''">#{positionAddress},</if>
+            <if test="needNum != null">#{needNum},</if>
+            <if test="positionDetail != null and positionDetail != ''">#{positionDetail},</if>
+            <if test="status != null">#{status},</if>
+            <if test="publishTime != null">#{publishTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="edu != null">#{edu},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCmRecruit" parameterType="CmRecruit">
+        update cm_recruit
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="positionName != null and positionName != ''">position_name = #{positionName},</if>
+            <if test="positionObject != null and positionObject != ''">position_object = #{positionObject},</if>
+            <if test="positionAddress != null and positionAddress != ''">position_address = #{positionAddress},</if>
+            <if test="needNum != null">need_num = #{needNum},</if>
+            <if test="positionDetail != null and positionDetail != ''">position_detail = #{positionDetail},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="publishTime != null">publish_time = #{publishTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="edu != null">edu = #{edu},</if>
+        </trim>
+        where position_id = #{positionId}
+    </update>
+
+    <delete id="deleteCmRecruitById" parameterType="Long">
+        delete from cm_recruit where position_id = #{positionId}
+    </delete>
+
+    <delete id="deleteCmRecruitByIds" parameterType="String">
+        delete from cm_recruit where position_id in 
+        <foreach item="positionId" collection="array" open="(" separator="," close=")">
+            #{positionId}
+        </foreach>
+    </delete>
+
+</mapper>

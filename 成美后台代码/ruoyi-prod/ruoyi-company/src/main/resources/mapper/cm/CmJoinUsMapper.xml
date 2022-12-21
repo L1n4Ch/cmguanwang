@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cm.mapper.CmJoinUsMapper">
+    
+    <resultMap type="CmJoinUs" id="CmJoinUsResult">
+        <result property="jId"    column="j_id"    />
+        <result property="name"    column="name"    />
+        <result property="gender"    column="gender"    />
+        <result property="age"    column="age"    />
+        <result property="edu"    column="edu"    />
+        <result property="phone"    column="phone"    />
+        <result property="email"    column="email"    />
+        <result property="address"    column="address"    />
+        <result property="cardId"    column="card_id"    />
+        <result property="isVolunteer"    column="is_volunteer"    />
+        <result property="isMayhem"    column="is_mayhem"    />
+        <result property="vocation"    column="vocation"    />
+        <result property="introduce"    column="introduce"    />
+        <result property="minTime"    column="min_time"    />
+        <result property="estimateTime"    column="estimate_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectCmJoinUsVo">
+        select j_id, name, gender, age, edu, phone, email, address, card_id, is_volunteer, is_mayhem, vocation, introduce, min_time, estimate_time, create_by, create_time, update_by, update_time from cm_join_us
+    </sql>
+
+    <select id="selectCmJoinUsList" parameterType="CmJoinUs" resultMap="CmJoinUsResult">
+        <include refid="selectCmJoinUsVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="gender != null  and gender != ''"> and gender = #{gender}</if>
+            <if test="age != null "> and age = #{age}</if>
+            <if test="edu != null  and edu != ''"> and edu = #{edu}</if>
+            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
+            <if test="email != null  and email != ''"> and email like concat('%', #{email}, '%')</if>
+            <if test="address != null  and address != ''"> and address = #{address}</if>
+            <if test="cardId != null  and cardId != ''"> and card_id like concat('%', #{cardId}, '%')</if>
+            <if test="isVolunteer != null  and isVolunteer != ''"> and is_volunteer = #{isVolunteer}</if>
+            <if test="isMayhem != null  and isMayhem != ''"> and is_mayhem = #{isMayhem}</if>
+            <if test="vocation != null  and vocation != ''"> and vocation = #{vocation}</if>
+            <if test="introduce != null  and introduce != ''"> and introduce = #{introduce}</if>
+            <if test="minTime != null "> and min_time = #{minTime}</if>
+            <if test="estimateTime != null  and estimateTime != ''"> and estimate_time = #{estimateTime}</if>
+        </where>
+        order by create_time desc
+    </select>
+    
+    <select id="selectCmJoinUsById" parameterType="Long" resultMap="CmJoinUsResult">
+        <include refid="selectCmJoinUsVo"/>
+        where j_id = #{jId}
+    </select>
+        
+    <insert id="insertCmJoinUs" parameterType="CmJoinUs" useGeneratedKeys="true" keyProperty="jId">
+        insert into cm_join_us
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">name,</if>
+            <if test="gender != null and gender != ''">gender,</if>
+            <if test="age != null">age,</if>
+            <if test="edu != null and edu != ''">edu,</if>
+            <if test="phone != null and phone != ''">phone,</if>
+            <if test="email != null and email != ''">email,</if>
+            <if test="address != null and address != ''">address,</if>
+            <if test="cardId != null and cardId != ''">card_id,</if>
+            <if test="isVolunteer != null and isVolunteer != ''">is_volunteer,</if>
+            <if test="isMayhem != null and isMayhem != ''">is_mayhem,</if>
+            <if test="vocation != null">vocation,</if>
+            <if test="introduce != null">introduce,</if>
+            <if test="minTime != null">min_time,</if>
+            <if test="estimateTime != null and estimateTime != ''">estimate_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="gender != null and gender != ''">#{gender},</if>
+            <if test="age != null">#{age},</if>
+            <if test="edu != null and edu != ''">#{edu},</if>
+            <if test="phone != null and phone != ''">#{phone},</if>
+            <if test="email != null and email != ''">#{email},</if>
+            <if test="address != null and address != ''">#{address},</if>
+            <if test="cardId != null and cardId != ''">#{cardId},</if>
+            <if test="isVolunteer != null and isVolunteer != ''">#{isVolunteer},</if>
+            <if test="isMayhem != null and isMayhem != ''">#{isMayhem},</if>
+            <if test="vocation != null">#{vocation},</if>
+            <if test="introduce != null">#{introduce},</if>
+            <if test="minTime != null">#{minTime},</if>
+            <if test="estimateTime != null and estimateTime != ''">#{estimateTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCmJoinUs" parameterType="CmJoinUs">
+        update cm_join_us
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="gender != null and gender != ''">gender = #{gender},</if>
+            <if test="age != null">age = #{age},</if>
+            <if test="edu != null and edu != ''">edu = #{edu},</if>
+            <if test="phone != null and phone != ''">phone = #{phone},</if>
+            <if test="email != null and email != ''">email = #{email},</if>
+            <if test="address != null and address != ''">address = #{address},</if>
+            <if test="cardId != null and cardId != ''">card_id = #{cardId},</if>
+            <if test="isVolunteer != null and isVolunteer != ''">is_volunteer = #{isVolunteer},</if>
+            <if test="isMayhem != null and isMayhem != ''">is_mayhem = #{isMayhem},</if>
+            <if test="vocation != null">vocation = #{vocation},</if>
+            <if test="introduce != null">introduce = #{introduce},</if>
+            <if test="minTime != null">min_time = #{minTime},</if>
+            <if test="estimateTime != null and estimateTime != ''">estimate_time = #{estimateTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where j_id = #{jId}
+    </update>
+
+    <delete id="deleteCmJoinUsById" parameterType="Long">
+        delete from cm_join_us where j_id = #{jId}
+    </delete>
+
+    <delete id="deleteCmJoinUsByIds" parameterType="String">
+        delete from cm_join_us where j_id in 
+        <foreach item="jId" collection="array" open="(" separator="," close=")">
+            #{jId}
+        </foreach>
+    </delete>
+
+</mapper>

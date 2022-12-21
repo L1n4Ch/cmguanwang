@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cm.mapper.CmBannerConfigMapper">
+    
+    <resultMap type="CmBannerConfig" id="CmBannerConfigResult">
+        <result property="bId"    column="b_id"    />
+        <result property="numSort"    column="num_sort"    />
+        <result property="status"    column="status"    />
+        <result property="imgId"    column="img_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="typeId"    column="type_id"    />
+        <result property="clientType"    column="client_type"    />
+        <association property="imageFile" javaType="CmFileInfo">
+            <result property="fId"    column="f_id"    />
+            <result property="fileType"    column="file_type"    />
+            <result property="fileName"    column="file_name"    />
+            <result property="fileSize"    column="file_size"    />
+            <result property="fileAddr"    column="file_addr"    />
+            <result property="fileUrl"    column="file_url"    />
+        </association>
+    </resultMap>
+
+    <sql id="selectCmBannerConfigVo">
+        select b_id, num_sort, status, img_id, create_by, create_time, update_by, update_time, type_id, client_type from cm_banner_config
+    </sql>
+
+    <select id="selectCmBannerConfigList" parameterType="CmBannerConfig" resultMap="CmBannerConfigResult">
+        select bc.b_id,  bc.num_sort,  bc.status,  bc.img_id,  bc.create_by,  bc.create_time,  bc.update_by,  bc.update_time, bc.type_id, bc.client_type,
+        f.f_id, f.file_type, f.file_name, f.file_size, f.file_addr,f.file_url
+        from cm_banner_config bc
+        left join cm_file_info f on bc.img_id = f.f_id
+        <where>  
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="imgId != null "> and img_id = #{imgId}</if>
+            <if test="typeId != null "> and type_id = #{typeId}</if>
+            <if test="clientType != null "> and client_type = #{clientType}</if>
+        </where>
+        order by bc.client_type, bc.num_sort asc
+    </select>
+    
+    <select id="selectCmBannerConfigById" parameterType="Long" resultMap="CmBannerConfigResult">
+        <include refid="selectCmBannerConfigVo"/>
+        where b_id = #{bId}
+    </select>
+        
+    <insert id="insertCmBannerConfig" parameterType="CmBannerConfig" useGeneratedKeys="true" keyProperty="bId">
+        insert into cm_banner_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="numSort != null">num_sort,</if>
+            <if test="status != null and status != ''">status,</if>
+            <if test="imgId != null">img_id,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="typeId != null">type_id,</if>
+            <if test="clientType != null">client_type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="numSort != null">#{numSort},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="imgId != null">#{imgId},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="typeId != null">#{typeId},</if>
+            <if test="clientType != null">#{clientType},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCmBannerConfig" parameterType="CmBannerConfig">
+        update cm_banner_config
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="numSort != null">num_sort = #{numSort},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="imgId != null">img_id = #{imgId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="typeId != null">type_id = #{typeId},</if>
+            <if test="clientType != null">client_type = #{clientType},</if>
+        </trim>
+        where b_id = #{bId}
+    </update>
+
+    <delete id="deleteCmBannerConfigById" parameterType="Long">
+        delete from cm_banner_config where b_id = #{bId}
+    </delete>
+
+    <delete id="deleteCmBannerConfigByIds" parameterType="String">
+        delete from cm_banner_config where b_id in 
+        <foreach item="bId" collection="array" open="(" separator="," close=")">
+            #{bId}
+        </foreach>
+    </delete>
+
+</mapper>

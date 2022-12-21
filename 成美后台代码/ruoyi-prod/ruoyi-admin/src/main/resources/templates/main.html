@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--360浏览器优先以webkit内核解析-->
+    <title>若依介绍</title>
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link href="../static/css/font-awesome.min.css" th:href="@{/css/font-awesome.min.css}" rel="stylesheet"/>
+    <link href="../static/css/main/animate.min.css" th:href="@{/css/main/animate.min.css}" rel="stylesheet"/>
+    <link href="../static/css/main/style.min862f.css" th:href="@{/css/main/style.min862f.css}" rel="stylesheet"/>
+    <th:block th:include="include :: header('首页')"/>
+</head>
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row ">
+        <div class="col-sm-4">
+            <div class="ibox">
+                <div class="ibox-content">
+                    <h5>本日访问量</h5>
+                    <h2 id="hoursSum"></h2>
+                    <div id="sparkline1"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="ibox">
+                <div class="ibox-content">
+                    <h5>本周访问量</h5>
+                    <h2 id="weekSum"></h2>
+                    <div id="sparkline2"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="ibox">
+                <div class="ibox-content">
+                    <h5>本月访问量</h5>
+                    <h2 id="monthSum"></h2>
+                    <div id="sparkline3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>网站访问量</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="echarts" id="echarts-line-chart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{/ajax/libs/layer/layer.min.js}"></script>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: peity-js"/>
+<th:block th:include="include :: sparkline-js"/>
+<th:block th:include="include :: echarts-js"/>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $.ajax({
+            type: "get",
+            url: ctx + "cm/visits/getData",
+            success: function (data) {
+                $("#hoursSum").text(data.hoursSum);
+                $("#weekSum").text(data.weekSum);
+                $("#monthSum").text(data.monthSum);
+                $("#sparkline1").sparkline(data.hoursCount, {
+                    type: 'line',
+                    width: '100%',
+                    height: '60',
+                    lineColor: '#1ab394',
+                    fillColor: "#ffffff"
+                });
+                $("#sparkline2").sparkline(data.weekCount, {
+                    type: 'line',
+                    width: '100%',
+                    height: '60',
+                    lineColor: '#1ab394',
+                    fillColor: "#ffffff"
+                });
+                $("#sparkline3").sparkline(data.monthCount, {
+                    type: 'line',
+                    width: '100%',
+                    height: '60',
+                    lineColor: '#ed5565',
+                    fillColor: "#ffffff"
+                });
+
+                var dateArr = ["周一","周二","周三","周四","周五","周六","周日"];
+                var lineChart = echarts.init(document.getElementById("echarts-line-chart"));
+                var lineoption = {
+                    title: {
+                        text: '一周访问量'
+                    },
+                    tooltip: {
+                        trigger: 'axis'
+                    },
+                    legend: {
+                        data: ['']
+                    },
+                    grid: {
+                        x: 40,
+                        x2: 40,
+                        y2: 24
+                    },
+                    calculable: true,
+                    xAxis: [
+                        {
+                            type: 'category',
+                            boundaryGap: false,
+                            data:dateArr
+                        }
+                    ],
+                    yAxis: [
+                        {
+                            type: 'value',
+                            axisLabel: {
+                                formatter: '{value} 次'
+                            }
+                        }
+                    ],
+                    series: [
+                        {
+                            name: '网站访问量',
+                            type: 'line',
+                            data: data.weekCount,
+                            markPoint: {
+                                data: [
+                                    {type: 'max', name: '最大值'},
+                                    {type: 'min', name: '最小值'}
+                                ]
+                            },
+                            markLine: {
+                                data: [
+                                    {type: 'average', name: '平均值'}
+                                ]
+                            }
+                        }
+                    ]
+                };
+                lineChart.setOption(lineoption);
+                $(window).resize(lineChart.resize);
+            }
+        });
+    });
+
+
+</script>
+</body>
+</html>

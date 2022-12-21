@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cm.mapper.CmArticleMapper">
+    
+    <resultMap type="CmArticle" id="CmArticleResult">
+        <result property="articleId"    column="article_id"    />
+        <result property="menuId"    column="menu_id"    />
+        <result property="title"    column="title"    />
+        <result property="introduce"    column="introduce"    />
+        <result property="detail"    column="detail"    />
+        <result property="bgImage"    column="bg_image"    />
+        <result property="ext"    column="ext"    />
+        <result property="extPdf"    column="extPdf"    />
+        <result property="status"    column="status"    />
+        <result property="orderNum"    column="order_num"    />
+        <result property="pageShow"    column="page_show"    />
+        <result property="readNum"    column="read_num"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="languageType"    column="language_type"    />
+        <association property="cmMenu" javaType="CmMenu">
+            <result property="menuId"    column="menu_id"    />
+            <result property="menuName"    column="menu_name"    />
+            <result property="parentId"    column="parent_id"    />
+            <result property="orderNum"    column="order_num"    />
+            <result property="menuImg"    column="menu_img"    />
+            <result property="menuModel"    column="menu_model"    />
+            <result property="status"    column="status"    />
+            <result property="url"    column="url"    />
+        </association>
+        <association property="imageFile" javaType="CmFileInfo">
+            <result property="fId"    column="f_id"    />
+            <result property="fileType"    column="file_type"    />
+            <result property="fileName"    column="file_name"    />
+            <result property="fileSize"    column="file_size"    />
+            <result property="fileAddr"    column="file_addr"    />
+            <result property="fileUrl"    column="file_url"    />
+        </association>
+
+    </resultMap>
+
+    <sql id="selectCmArticleVo">
+        select article_id, menu_id, title, introduce, detail, bg_image, ext, extPdf, status, order_num, page_show, read_num, create_by, create_time, update_by, update_time, language_type from cm_article
+    </sql>
+
+    <select id="selectCmArticleList" parameterType="CmArticle" resultMap="CmArticleResult">
+        select ca.article_id, ca.menu_id, ca.title, ca.introduce,
+        <if test="params.showDetail != null and params.showDetail == 1">
+            detail,
+        </if>
+        ca.bg_image, ca.ext, ca.extPdf, ca.status,ca.language_type,
+        ca.order_num, ca.page_show, ca.read_num, ca.create_by, ca.create_time, ca.update_by, CASE WHEN ca.update_time IS NULL THEN ca.create_time ELSE ca.update_time END AS update_time
+        ,cm.menu_id, cm.menu_name, cm.parent_id, cm.order_num,
+        cm.menu_img, cm.menu_model, cm.status,cm.url,
+        f.f_id, f.file_type, f.file_name, f.file_size, f.file_addr,f.file_url
+        from cm_article ca
+        join cm_menu cm on ca.menu_id = cm.menu_id
+        left join cm_file_info f on ca.bg_image = f.f_id
+
+        <where>
+            <if test="menuId != null "> and ca.menu_id = #{menuId}</if>
+            <if test="title != null  and title != ''"> and title like concat('%', #{title}, '%')</if>
+            <if test="introduce != null  and introduce != ''"> and introduce like concat('%', #{introduce}, '%')</if>
+            <!--<if test="title != null  and title != ''"> and ca.title = #{title}</if>-->
+            <!--<if test="introduce != null  and introduce != ''"> and ca.introduce = #{introduce}</if>-->
+            <if test="status != null  and status != ''"> and ca.status = #{status}</if>
+            <if test="orderNum != null "> and ca.order_num = #{orderNum}</if>
+            <if test="pageShow != null  and pageShow != ''"> and ca.page_show = #{pageShow}</if>
+            <if test="languageType != null  and languageType != ''"> and ca.language_type = #{languageType}</if>
+            <if test="params.key != null and params.key != ''">
+                and (ca.title like concat('%', #{params.key}, '%') or ca.introduce like concat('%', #{params.key}, '%'))
+            </if>
+            <if test="params.newIds != null and params.newIds.size() > 0">
+                and ca.article_id not in
+                <foreach collection="params.newIds" item="newId" open="(" separator="," close=")">
+                    #{newId}
+                </foreach>
+            </if>
+        </where>
+        order by ca.order_num asc , ca.update_time desc
+    </select>
+    
+    <select id="selectCmArticleById" parameterType="Long" resultMap="CmArticleResult">
+        <include refid="selectCmArticleVo"/>
+        where article_id = #{articleId}
+    </select>
+    <select id="selectCmArticleListByLimitNum" resultMap="CmArticleResult">
+        select ca.article_id, ca.menu_id, ca.title, ca.introduce,
+        <if test="cmArticle.params.showDetail != null and cmArticle.params.showDetail == 1">
+            detail,
+        </if>
+        ca.bg_image, ca.ext, ca.extPdf, ca.status,
+        ca.order_num, ca.page_show, ca.read_num, ca.create_by, ca.create_time, ca.update_by, ca.update_time
+        ,cm.menu_id, cm.menu_name, cm.parent_id, cm.order_num,
+        cm.menu_img, cm.menu_model, cm.status,cm.url,
+        f.f_id, f.file_type, f.file_name, f.file_size, f.file_addr,f.file_url
+        from cm_article ca
+        join cm_menu cm on ca.menu_id = cm.menu_id
+        left join cm_file_info f on ca.bg_image = f.f_id
+
+        <where>
+            <if test="cmArticle.menuId != null "> and ca.menu_id = #{cmArticle.menuId}</if>
+            <if test="cmArticle.status != null  and cmArticle.status != ''"> and ca.status = #{cmArticle.status}</if>
+        </where>
+        order by ca.order_num asc , ca.update_time desc
+        limit #{limitNum}
+    </select>
+
+    <insert id="insertCmArticle" parameterType="CmArticle" useGeneratedKeys="true" keyProperty="articleId">
+        insert into cm_article
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="menuId != null">menu_id,</if>
+            <if test="title != null and title != ''">title,</if>
+            <if test="introduce != null and introduce != ''">introduce,</if>
+            <if test="detail != null and detail != ''">detail,</if>
+            <if test="bgImage != null">bg_image,</if>
+            <if test="ext != null">ext,</if>
+            <if test="extPdf != null">extPdf,</if>
+            <if test="status != null">status,</if>
+            <if test="orderNum != null">order_num,</if>
+            <if test="pageShow != null">page_show,</if>
+            <if test="readNum != null">read_num,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="languageType != null">language_type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="menuId != null">#{menuId},</if>
+            <if test="title != null and title != ''">#{title},</if>
+            <if test="introduce != null and introduce != ''">#{introduce},</if>
+            <if test="detail != null and detail != ''">#{detail},</if>
+            <if test="bgImage != null">#{bgImage},</if>
+            <if test="ext != null">#{ext},</if>
+            <if test="extPdf != null">#{extPdf},</if>
+            <if test="status != null">#{status},</if>
+            <if test="orderNum != null">#{orderNum},</if>
+            <if test="pageShow != null">#{pageShow},</if>
+            <if test="readNum != null">#{readNum},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="languageType != null">#{languageType},</if>
+         </trim>
+    </insert>
+    <update id="addReadNum">
+        update cm_article set read_num = read_num + 1
+        where article_id = #{articleId}
+    </update>
+
+    <update id="updateCmArticle" parameterType="CmArticle">
+        update cm_article
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="menuId != null">menu_id = #{menuId},</if>
+            <if test="title != null and title != ''">title = #{title},</if>
+            <if test="introduce != null and introduce != ''">introduce = #{introduce},</if>
+            <if test="detail != null and detail != ''">detail = #{detail},</if>
+            <if test="bgImage != null">bg_image = #{bgImage},</if>
+            <if test="ext != null">ext = #{ext},</if>
+            <if test="extPdf != null">extPdf = #{extPdf},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="orderNum != null">order_num = #{orderNum},</if>
+            <if test="pageShow != null">page_show = #{pageShow},</if>
+            <if test="readNum != null">read_num = #{readNum},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="languageType != null">language_type = #{languageType},</if>
+        </trim>
+        where article_id = #{articleId}
+    </update>
+
+    <delete id="deleteCmArticleById" parameterType="Long">
+        delete from cm_article where article_id = #{articleId}
+    </delete>
+
+    <delete id="deleteCmArticleByIds" parameterType="String">
+        delete from cm_article where article_id in 
+        <foreach item="articleId" collection="array" open="(" separator="," close=")">
+            #{articleId}
+        </foreach>
+    </delete>
+
+</mapper>

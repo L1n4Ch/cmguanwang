@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cm.mapper.CmDonationUserMapper">
+
+    <resultMap type="CmDonationUser" id="CmDonationUserResult">
+        <result property="duId"    column="du_id"    />
+        <result property="duName"    column="du_name"    />
+        <result property="duPhone"    column="du_phone"    />
+        <result property="duEmail"    column="du_email"    />
+        <result property="duAddress"    column="du_address"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="fileId"    column="file_id"    />
+        <result property="fileUrl"    column="file_url"    />
+        <result property="langMark"    column="lang_mark"    />
+    </resultMap>
+
+    <sql id="selectCmDonationUserVo">
+        select du_id, du_name, du_phone, du_email, du_address, create_by, create_time, file_id, case lang_mark when '' then 'CN' else lang_mark end as lang_mark from cm_donation_user
+    </sql>
+
+    <select id="selectCmDonationUserList" parameterType="CmDonationUser" resultMap="CmDonationUserResult">
+        select du.du_id, du.du_name, du.du_phone, du.du_email, du.du_address, du.create_by, du.create_time, du.file_id, case du.lang_mark when '' then 'CN' else du.lang_mark end as lang_mark, fi.file_url
+        from cm_donation_user du
+        left join cm_file_info fi
+        on du.file_id = fi.f_id
+        <where>
+            <if test="duName != null  and duName != ''"> and du_name like concat('%', #{duName}, '%')</if>
+            <if test="duPhone != null  and duPhone != ''"> and du_phone = #{duPhone}</if>
+            <if test="duEmail != null  and duEmail != ''"> and du_email like concat('%', #{duEmail}, '%')</if>
+            <if test="duAddress != null  and duAddress != ''"> and du_address like concat('%', #{duAddress}, '%')</if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <select id="selectCmDonationUserById" parameterType="Long" resultMap="CmDonationUserResult">
+        <include refid="selectCmDonationUserVo"/>
+        where du_id = #{duId}
+    </select>
+
+    <insert id="insertCmDonationUser" parameterType="CmDonationUser" useGeneratedKeys="true" keyProperty="duId">
+        insert into cm_donation_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="duName != null and duName != ''">du_name,</if>
+            <if test="duPhone != null and duPhone != ''">du_phone,</if>
+            <if test="duEmail != null and duEmail != ''">du_email,</if>
+            <if test="duAddress != null and duAddress != ''">du_address,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="fileId != null">file_id,</if>
+            <if test="langMark != null">lang_mark,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="duName != null and duName != ''">#{duName},</if>
+            <if test="duPhone != null and duPhone != ''">#{duPhone},</if>
+            <if test="duEmail != null and duEmail != ''">#{duEmail},</if>
+            <if test="duAddress != null and duAddress != ''">#{duAddress},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="fileId != null">#{fileId},</if>
+            <if test="langMark != null">#{langMark},</if>
+        </trim>
+    </insert>
+
+    <update id="updateCmDonationUser" parameterType="CmDonationUser">
+        update cm_donation_user
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="duName != null and duName != ''">du_name = #{duName},</if>
+            <if test="duPhone != null and duPhone != ''">du_phone = #{duPhone},</if>
+            <if test="duEmail != null and duEmail != ''">du_email = #{duEmail},</if>
+            <if test="duAddress != null and duAddress != ''">du_address = #{duAddress},</if>
+            <if test="langMark != null and langMark != ''">lang_mark = #{langMark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where du_id = #{duId}
+    </update>
+
+    <delete id="deleteCmDonationUserById" parameterType="Long">
+        delete from cm_donation_user where du_id = #{duId}
+    </delete>
+
+    <delete id="deleteCmDonationUserByIds" parameterType="String">
+        delete from cm_donation_user where du_id in
+        <foreach item="duId" collection="array" open="(" separator="," close=")">
+            #{duId}
+        </foreach>
+    </delete>
+
+</mapper>

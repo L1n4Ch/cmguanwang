@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改成美大事件')" />
+    <th:block th:include="include :: bootstrap-fileinput-css"/>
+    <th:block th:include="include :: summernote-css" />
+    <style type="text/css">
+        .modal-dialog{
+            position: relative;
+            top: 20%;
+        }
+    </style>
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-bigEvent-edit" th:object="${cmBigEvent}">
+            <input name="beId" th:field="*{beId}" type="hidden">
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">发布语言：</label>
+                <div class="col-sm-8">
+                    <div class="radio-box">
+                        <input id="publishlangcn" name="pubLang" type="radio" value="CN" th:checked="*{pubLang} eq 'CN'"/>
+                        <label for="publishlangcn">中文</label>
+                    </div>
+                    <div class="radio-box">
+                        <input id="publishlangen" name="pubLang" type="radio" value="EN" th:checked="*{pubLang} eq 'EN'"/>
+                        <label for="publishlangen">英文</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">年份：</label>
+                <div class="col-sm-8">
+                    <select name="year" class="form-control m-b" th:with="type=${@dict.getType('big_event_year')}" required>
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"  th:field="*{year}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">标题：</label>
+                <div class="col-sm-8">
+                    <input name="title" th:field="*{title}" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">简介：</label>
+                <div class="col-sm-8">
+                    <textarea name="introduce" class="form-control" required>[[*{introduce}]]</textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">背景图：</label>
+                <div class="col-sm-8">
+                    <input type="hidden" name="bgImage" th:field="*{bgImage}" th:data-url="*{bgImageFile.fileUrl}">
+                    <div class="file-loading">
+                        <input class="form-control file-upload" id="bgImage" name="imageFile" type="file">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">详情：</label>
+                <div class="col-sm-8">
+                    <input type="hidden" class="form-control" th:field="*{detail}">
+                    <div class="summernote" id="detail"></div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: bootstrap-fileinput-js"/>
+    <th:block th:include="include :: summernote-js" />
+    <script th:inline="javascript">
+        var prefix = ctx + "cm/bigEvent";
+        $("#form-bigEvent-edit").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            // 判断图片是否上传
+            var bgImage = $("input[name='bgImage']").val();
+            if(bgImage){
+                if ($.validate.form()) {
+                    $.operate.save(prefix + "/edit", $('#form-bigEvent-edit').serialize());
+                }
+            }else{
+                $.modal.alertWarning("请先上传图片！");
+            }
+
+        }
+
+        $(".file-upload").each(function (i) {
+            var val = $("input[name='" + this.id + "']").data("url");
+            $(this).fileinput({
+                'uploadUrl':  ctx + "cm/common/uploadImg",
+                initialPreviewAsData: true,
+                initialPreview: [val],
+                maxFileCount: 1,
+                autoReplace: true,
+                allowedFileExtensions: ["jpg", "png", "jpeg"], //接收的文件后缀
+                dropZoneTitle: '拖拽文件到这里 ',
+                uploadExtraData: function(previewId, index) {
+                    // 额外的属性
+                    return {type: "bigEvent"};
+                }
+            }).on('fileuploaded', function (event, data, previewId, index) {
+                console.log(data.response)
+                $("input[name='" + event.currentTarget.id + "']").val(data.response.cmFileInfo.fId)
+            }).on('fileremoved', function (event, id, index) {
+                $("input[name='" + event.currentTarget.id + "']").val('')
+            })
+            $(this).fileinput('_initFileActions');
+        });
+
+        $(function() {
+            $('.summernote').each(function(i) {
+                $('#' + this.id).summernote({
+                    lang: 'zh-CN',
+                    placeholder: '请输入内容',
+                    height : 200,
+                    callbacks: {
+                        onChange: function(contents, $edittable) {
+                            $("input[name='" + this.id + "']").val(contents);
+                        },
+                        onImageUpload: function(files) {
+                            var obj = this;
+                            var data = new FormData();
+                            data.append("imageFile", files[0]);
+                            data.append("type", "editorImg");
+
+                            $.ajax({
+                                type: "post",
+                                url: ctx + "cm/common/uploadImg",
+                                data: data,
+                                cache: false,
+                                contentType: false,
+                                processData: false,
+                                dataType: 'json',
+                                success: function(result) {
+                                    if (result.code == web_status.SUCCESS) {
+                                        $('#' + obj.id).summernote('insertImage',result.cmFileInfo.fileUrl);
+                                    } else {
+                                        $.modal.alertError(result.msg);
+                                    }
+                                },
+                                error: function(error) {
+                                    $.modal.alertWarning("图片上传失败。");
+                                }
+                            });
+                        }
+                    }
+                });
+                var content = $("input[name='" + this.id + "']").val();
+                $('#' + this.id).summernote('code', content);
+            })
+        });
+    </script>
+</body>
+</html>

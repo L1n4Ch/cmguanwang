@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cm.mapper.CmMenuMapper">
+    
+    <resultMap type="CmMenu" id="CmMenuResult">
+        <result property="menuId"    column="menu_id"    />
+        <result property="menuName"    column="menu_name"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="orderNum"    column="order_num"    />
+        <result property="menuImg"    column="menu_img"    />
+        <result property="menuModel"    column="menu_model"    />
+        <result property="status"    column="status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="url"    column="url"    />
+        <result property="languageType" column="language_type" />
+        <result property="parentName" column="parent_name" />
+        <association property="imageFile" javaType="CmFileInfo">
+            <result property="fId"    column="f_id"    />
+            <result property="fileType"    column="file_type"    />
+            <result property="fileName"    column="file_name"    />
+            <result property="fileSize"    column="file_size"    />
+            <result property="fileAddr"    column="file_addr"    />
+            <result property="fileUrl"    column="file_url"    />
+        </association>
+    </resultMap>
+
+    <sql id="selectCmMenuVo">
+        select menu_id, menu_name, parent_id, order_num, menu_img, menu_model, status, create_by, create_time, update_by, update_time, url, language_type from cm_menu
+    </sql>
+
+    <select id="selectCmMenuList" parameterType="CmMenu" resultMap="CmMenuResult">
+        select cm.menu_id, cm.menu_name, cm.parent_id, cm.order_num,
+        cm.menu_img, cm.menu_model, cm.status, cm.create_by, cm.create_time,
+        cm.update_by, cm.update_time, cm.url, cm.language_type,
+        f.f_id, f.file_type, f.file_name, f.file_size, f.file_addr,f.file_url
+        from cm_menu cm
+        left join cm_file_info f on cm.menu_img = f.f_id
+        <where>  
+            <if test="menuName != null  and menuName != ''"> and menu_name like concat('%', #{menuName}, '%')</if>
+            <if test="menuModel != null  and menuModel != ''"> and menu_model = #{menuModel}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="url != null  and url != ''"> and url = #{url}</if>
+            <if test="languageType != null  and languageType != ''"> and language_type = #{languageType}</if>
+        </where>
+        order by cm.parent_id asc , cm.order_num asc
+    </select>
+    
+    <select id="selectCmMenuById" parameterType="Long" resultMap="CmMenuResult">
+        select t.menu_id, t.menu_name, t.parent_id, t.order_num, t.menu_img, t.menu_model, t.status, t.create_by, t.create_time, t.update_by, t.update_time, t.url, t.language_type, p.menu_name as parent_name
+        from cm_menu t
+        left join cm_menu p on p.menu_id = t.parent_id
+        where t.menu_id = #{menuId}
+    </select>
+    <select id="selectCmMenuByParentId" resultMap="CmMenuResult">
+        select cm.menu_id, cm.menu_name, cm.parent_id, cm.order_num,
+        cm.menu_img, cm.menu_model, cm.status, cm.create_by, cm.create_time,
+        cm.update_by, cm.update_time, cm.url, cm.language_type,
+        f.f_id, f.file_type, f.file_name, f.file_size, f.file_addr,f.file_url
+        from cm_menu cm
+        left join cm_file_info f on cm.menu_img = f.f_id
+        where cm.parent_id = #{parentId} and cm.language_type = #{languageType}
+        order by parent_id
+    </select>
+
+    <insert id="insertCmMenu" parameterType="CmMenu" useGeneratedKeys="true" keyProperty="menuId">
+        insert into cm_menu
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="menuName != null and menuName != ''">menu_name,</if>
+            <if test="parentId != null">parent_id,</if>
+            <if test="orderNum != null">order_num,</if>
+            <if test="menuImg != null">menu_img,</if>
+            <if test="menuModel != null">menu_model,</if>
+            <if test="status != null">status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="url != null">url,</if>
+            <if test="languageType != null">language_type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="menuName != null and menuName != ''">#{menuName},</if>
+            <if test="parentId != null">#{parentId},</if>
+            <if test="orderNum != null">#{orderNum},</if>
+            <if test="menuImg != null">#{menuImg},</if>
+            <if test="menuModel != null">#{menuModel},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="url != null">#{url},</if>
+            <if test="languageType != null">#{languageType},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCmMenu" parameterType="CmMenu">
+        update cm_menu
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="menuName != null and menuName != ''">menu_name = #{menuName},</if>
+            <if test="parentId != null">parent_id = #{parentId},</if>
+            <if test="orderNum != null">order_num = #{orderNum},</if>
+            <if test="menuImg != null">menu_img = #{menuImg},</if>
+            <if test="menuModel != null">menu_model = #{menuModel},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="url != null">url = #{url},</if>
+            <if test="languageType != null">language_type = #{languageType},</if>
+        </trim>
+        where menu_id = #{menuId}
+    </update>
+
+    <delete id="deleteCmMenuById" parameterType="Long">
+        delete from cm_menu where menu_id = #{menuId}
+    </delete>
+
+    <delete id="deleteCmMenuByIds" parameterType="String">
+        delete from cm_menu where menu_id in 
+        <foreach item="menuId" collection="array" open="(" separator="," close=")">
+            #{menuId}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cm.mapper.CmJoinServiceMapper">
+    
+    <resultMap type="CmJoinService" id="CmJoinServiceResult">
+        <result property="jsId"    column="js_id"    />
+        <result property="jId"    column="j_id"    />
+        <result property="sId"    column="s_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectCmJoinServiceVo">
+        select js_id, j_id, s_id, create_by, create_time, update_by, update_time from cm_join_service
+    </sql>
+
+    <select id="selectCmJoinServiceList" parameterType="CmJoinService" resultMap="CmJoinServiceResult">
+        <include refid="selectCmJoinServiceVo"/>
+        <where>  
+            <if test="jId != null "> and j_id = #{jId}</if>
+            <if test="sId != null "> and s_id = #{sId}</if>
+        </where>
+        order by create_time desc
+    </select>
+    
+    <select id="selectCmJoinServiceById" parameterType="Long" resultMap="CmJoinServiceResult">
+        <include refid="selectCmJoinServiceVo"/>
+        where js_id = #{jsId}
+    </select>
+        
+    <insert id="insertCmJoinService" parameterType="CmJoinService" useGeneratedKeys="true" keyProperty="jsId">
+        insert into cm_join_service
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="jId != null">j_id,</if>
+            <if test="sId != null">s_id,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="jId != null">#{jId},</if>
+            <if test="sId != null">#{sId},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCmJoinService" parameterType="CmJoinService">
+        update cm_join_service
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="jId != null">j_id = #{jId},</if>
+            <if test="sId != null">s_id = #{sId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where js_id = #{jsId}
+    </update>
+
+    <delete id="deleteCmJoinServiceById" parameterType="Long">
+        delete from cm_join_service where js_id = #{jsId}
+    </delete>
+
+    <delete id="deleteCmJoinServiceByIds" parameterType="String">
+        delete from cm_join_service where js_id in 
+        <foreach item="jsId" collection="array" open="(" separator="," close=")">
+            #{jsId}
+        </foreach>
+    </delete>
+
+</mapper>

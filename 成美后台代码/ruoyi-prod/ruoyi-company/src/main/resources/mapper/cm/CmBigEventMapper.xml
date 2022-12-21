@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cm.mapper.CmBigEventMapper">
+
+    <resultMap type="CmBigEvent" id="CmBigEventResult">
+        <result property="beId"    column="be_id"    />
+        <result property="pubLang"    column="pub_lang"    />
+        <result property="year"    column="year"    />
+        <result property="title"    column="title"    />
+        <result property="introduce"    column="introduce"    />
+        <result property="detail"    column="detail"    />
+        <result property="bgImage"    column="bg_image"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <association property="bgImageFile" javaType="CmFileInfo">
+            <result property="fId"    column="f_id"    />
+            <result property="fileType"    column="file_type"    />
+            <result property="fileName"    column="file_name"    />
+            <result property="fileSize"    column="file_size"    />
+            <result property="fileAddr"    column="file_addr"    />
+            <result property="fileUrl"    column="file_url"    />
+        </association>
+    </resultMap>
+
+    <sql id="selectCmBigEventVo">
+        select be_id, pub_lang, year, title, introduce, detail, bg_image, create_by, create_time, update_by from cm_big_event
+    </sql>
+
+    <select id="selectCmBigEventList" parameterType="CmBigEvent" resultMap="CmBigEventResult">
+        select be.be_id, be.pub_lang, be.year, be.title, be.introduce,
+        <if test="params.showDetail != null">
+            <!-- 页面列表查询的时候不需要展示详情
+                 接口查询的时候直接提供详情  -->
+            be.detail,
+        </if>
+
+        be.bg_image, be.create_by, be.create_time, be.update_by,
+        f.f_id, f.file_type, f.file_name, f.file_size, f.file_addr,f.file_url
+        from cm_big_event be
+        left join cm_file_info f on be.bg_image = f.f_id
+        <where>
+            <if test="year != null "> and year = #{year}</if>
+            <if test="params.pubLang != null "> and pub_lang = #{params.pubLang}</if>
+            <if test="title != null  and title != ''"> and title like concat('%', #{title}, '%')</if>
+            <if test="introduce != null  and introduce != ''"> and introduce like concat('%', #{introduce}, '%')</if>
+            <if test="detail != null  and detail != ''"> and detail like concat('%', #{detail}, '%')</if>
+            <if test="bgImage != null "> and bg_image = #{bgImage}</if>
+        </where>
+        order by be.year desc
+    </select>
+
+    <select id="selectCmBigEventById" parameterType="Long" resultMap="CmBigEventResult">
+        <include refid="selectCmBigEventVo"/>
+        where be_id = #{beId}
+    </select>
+
+    <insert id="insertCmBigEvent" parameterType="CmBigEvent" useGeneratedKeys="true" keyProperty="beId">
+        insert into cm_big_event
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pubLang != null">pub_lang,</if>
+            <if test="year != null">year,</if>
+            <if test="title != null and title != ''">title,</if>
+            <if test="introduce != null and introduce != ''">introduce,</if>
+            <if test="detail != null and detail != ''">detail,</if>
+            <if test="bgImage != null">bg_image,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="pubLang != null">#{pubLang},</if>
+            <if test="year != null">#{year},</if>
+            <if test="title != null and title != ''">#{title},</if>
+            <if test="introduce != null and introduce != ''">#{introduce},</if>
+            <if test="detail != null and detail != ''">#{detail},</if>
+            <if test="bgImage != null">#{bgImage},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCmBigEvent" parameterType="CmBigEvent">
+        update cm_big_event
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="pubLang != null">pub_lang = #{pubLang},</if>
+            <if test="year != null">year = #{year},</if>
+            <if test="title != null and title != ''">title = #{title},</if>
+            <if test="introduce != null and introduce != ''">introduce = #{introduce},</if>
+            <if test="detail != null and detail != ''">detail = #{detail},</if>
+            <if test="bgImage != null">bg_image = #{bgImage},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+        </trim>
+        where be_id = #{beId}
+    </update>
+
+    <delete id="deleteCmBigEventById" parameterType="Long">
+        delete from cm_big_event where be_id = #{beId}
+    </delete>
+
+    <delete id="deleteCmBigEventByIds" parameterType="String">
+        delete from cm_big_event where be_id in
+        <foreach item="beId" collection="array" open="(" separator="," close=")">
+            #{beId}
+        </foreach>
+    </delete>
+
+</mapper>

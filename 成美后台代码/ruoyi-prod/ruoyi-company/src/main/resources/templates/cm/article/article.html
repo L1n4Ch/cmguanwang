@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('文章发布列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>标题：</label>
+                                <input type="text" name="title"/>
+                            </li>
+                            <li>
+                                <label>状态：</label>
+                                <select name="status" th:with="type=${@dict.getType('cm_status')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+
+                            <li>
+                                <label>语言：</label>
+                                <select name="languageType" th:with="type=${@dict.getType('language_type')}" id="languageType">
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+
+                            <li>
+                                <label>菜单：</label>
+                                <input id="treeId" name="menuId" type="hidden" th:value="${cmMenu?.menuId}"/>
+                                <input  type="text" onclick="selectMenuTree()" id="treeName" readonly="true" th:value="${cmMenu?.menuName}">
+
+
+                            </li>
+                            <li>
+                                <label>首页展示：</label>
+                                <select name="pageShow" th:with="type=${@dict.getType('cm_page_show')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="add()" shiro:hasPermission="cm:article:add">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-primary single disabled" onclick="edit()" shiro:hasPermission="cm:article:edit">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="cm:article:remove">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('cm:article:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('cm:article:remove')}]];
+        var statusDatas = [[${@dict.getType('cm_status')}]];
+        var pageShowDatas = [[${@dict.getType('cm_page_show')}]];
+        var languageDatas = [[${@dict.getType('language_type')}]];
+        var prefix = ctx + "cm/article";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add?languageType={languageType}",
+                updateUrl: prefix + "/edit/{id}?languageType={languageType}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "文章发布",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'articleId',
+                    title: '主键',
+                    visible: false
+                },
+                {
+                    field: 'menuId',
+                    title: '菜单',
+                    formatter: function(value, row, index) {
+                        return row.cmMenu.menuName;
+                    }
+                },
+                {
+                    field: 'title',
+                    title: '标题'
+                },
+                {
+                    field: 'introduce',
+                    title: '简介',
+                    visible: false
+                },
+                {
+                    field: 'status',
+                    title: '状态',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(statusDatas, value);
+                    },
+                    cellStyle: function(value, row, index) {
+
+                        if(value == 0){
+                            return { css: { "color": "green" } };
+                        }else{
+                            return { css: { "color": "red" } };
+                        }
+                    }
+                },
+                {
+                    field: 'pageShow',
+                    title: '首页展示',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(pageShowDatas, value);
+                    },cellStyle: function(value, row, index) {
+
+                        if(value == 0){
+                            return { css: { "color": "green" } };
+                        }else{
+                            return { css: { "color": "red" } };
+                        }
+                    }
+                },
+
+                {
+                    field: 'orderNum',
+                    title: '显示顺序'
+                },
+                {
+                    field: 'readNum',
+                    title: '访问数'
+                },
+                {
+                    field: 'createTime',
+                    title: '创建时间'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="edit(\'' + row.articleId + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.articleId + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+
+            // 语言选择后直接刷新菜单
+            $("#languageType").change(function (){
+                $.table.search();
+            })
+        });
+
+        /**
+         * 自定义添加的方法
+         */
+        function add(){
+            var languageType = $("#languageType").val();
+            var url = table.options.createUrl.replace("{id}", "");
+            url = url.replace("{languageType}", languageType);
+            table.set();
+            $.modal.openFull("添加" + table.options.modalName, url);
+        }
+
+        /**
+         * 自定义修改方法
+         */
+        function edit(id){
+            var languageType = $("#languageType").val();
+            table.options.updateUrl = table.options.updateUrl.split("?")[0]+"?languageType="+languageType;
+            $.operate.editFull(id);
+        }
+
+
+        /*成美菜单-新增-选择父成美菜单树*/
+        function selectMenuTree() {
+            var options = {
+                title: '成美菜单选择',
+                width: "380",
+                url:  ctx + "cm/menu/selectMenuTree/" + $("#treeId").val()+"?languageType="+$("#languageType").val(),
+                callBack: doSubmit
+            };
+            $.modal.openOptions(options);
+        }
+        function doSubmit(index, layero){
+            var body = layer.getChildFrame('body', index);
+            $("#treeId").val(body.find('#treeId').val());
+            $("#treeName").val(body.find('#treeName').val());
+            layer.close(index);
+        }
+        function reset(){
+            //将菜单清除
+            $("#treeId").val("");
+            $.form.reset()
+        }
+    </script>
+</body>
+</html>

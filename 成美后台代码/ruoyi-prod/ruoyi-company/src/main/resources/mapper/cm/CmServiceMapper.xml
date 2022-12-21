@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.cm.mapper.CmServiceMapper">
+    
+    <resultMap type="CmService" id="CmServiceResult">
+        <result property="sId"    column="s_id"    />
+        <result property="sItem"    column="s_item"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectCmServiceVo">
+        select s_id, s_item, create_by, create_time, update_by, update_time from cm_service
+    </sql>
+
+    <select id="selectCmServiceList" parameterType="CmService" resultMap="CmServiceResult">
+        <include refid="selectCmServiceVo"/>
+        <where>  
+            <if test="sItem != null  and sItem != ''"> and s_item = #{sItem}</if>
+        </where>
+        order by create_time desc
+    </select>
+    
+    <select id="selectCmServiceById" parameterType="Long" resultMap="CmServiceResult">
+        <include refid="selectCmServiceVo"/>
+        where s_id = #{sId}
+    </select>
+        
+    <insert id="insertCmService" parameterType="CmService" useGeneratedKeys="true" keyProperty="sId">
+        insert into cm_service
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sItem != null and sItem != ''">s_item,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="sItem != null and sItem != ''">#{sItem},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCmService" parameterType="CmService">
+        update cm_service
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sItem != null and sItem != ''">s_item = #{sItem},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where s_id = #{sId}
+    </update>
+
+    <delete id="deleteCmServiceById" parameterType="Long">
+        delete from cm_service where s_id = #{sId}
+    </delete>
+
+    <delete id="deleteCmServiceByIds" parameterType="String">
+        delete from cm_service where s_id in 
+        <foreach item="sId" collection="array" open="(" separator="," close=")">
+            #{sId}
+        </foreach>
+    </delete>
+
+</mapper>
